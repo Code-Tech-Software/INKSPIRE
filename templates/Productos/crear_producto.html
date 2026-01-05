@@ -1,0 +1,344 @@
+<h2>Crear producto</h2>
+
+<form method="post" enctype="multipart/form-data" id="form-crear-producto">
+    {% csrf_token %}
+
+    <fieldset>
+        <legend>Datos del producto</legend>
+        {{ producto_form.as_p }}
+    </fieldset>
+
+    <fieldset>
+        <legend>Imágenes del producto</legend>
+
+        <div id="imagenes-container">
+            <!-- Imagen obligatoria -->
+            <div class="imagen-item">
+                <input type="file" name="imagenes" required>
+                <small>Imagen principal</small>
+            </div>
+        </div>
+
+        <button type="button" id="btn-agregar-imagen">➕ Agregar otra imagen</button>
+    </fieldset>
+
+    <fieldset>
+        <legend>Variantes (opcional)</legend>
+
+        <div id="variant-types-container">
+        </div>
+
+        <button type="button" id="btn-agregar-variant-type">➕ Agregar variante</button>
+        <!-- Botón de generar eliminado para generación dinámica -->
+
+        <hr>
+
+        <div id="variant-message" aria-live="polite" style="color:#b00; margin-bottom:8px;"></div>
+
+        <div id="combinaciones-container">
+            <!-- Tabla de combinaciones generadas -->
+        </div>
+
+        <!-- Hidden inputs que enviará JS con JSON con la info -->
+        <input type="hidden" name="variants_info" id="variants_info">
+        <input type="hidden" name="variant_combinations" id="variant_combinations">
+    </fieldset>
+
+    <br>
+    <button type="submit">Guardar producto</button>
+</form>
+
+<script>
+    /* ---------------------------
+       Imágenes dinámicas (sin cambios funcionales)
+       --------------------------- */
+    document.getElementById('btn-agregar-imagen').addEventListener('click', function () {
+        const container = document.getElementById('imagenes-container')
+        const div = document.createElement('div')
+        div.classList.add('imagen-item')
+        div.innerHTML = `
+        <input type="file" name="imagenes" required>
+        <button type="button" class="btn-quitar-imagen">❌ Quitar</button>
+    `
+        container.appendChild(div)
+    })
+
+    document.getElementById('imagenes-container').addEventListener('click', function (e) {
+        if (e.target.matches('.btn-quitar-imagen')) {
+            const container = document.getElementById('imagenes-container')
+            // mínimo 1 imagen
+            if (container.querySelectorAll('.imagen-item').length === 1) {
+                alert('Debe existir al menos una imagen')
+                return
+            }
+            e.target.parentElement.remove()
+        }
+    })
+
+    /* ---------------------------
+       Variantes (Option Types y Option Values)
+       --------------------------- */
+
+    let variantTypeIndex = 0
+
+    function crearVariantTypeDOM(name = '', values = []) {
+        const wrapper = document.createElement('div')
+        wrapper.classList.add('variant-type')
+        wrapper.dataset.index = variantTypeIndex
+
+        wrapper.innerHTML = `
+        <label>Nombre variante:
+            <input type="text" class="variant-name" placeholder="Ej: Talla" value="${name}">
+        </label>
+        <div class="values-list"></div>
+        <button type="button" class="btn-add-value">➕ Agregar valor</button>
+        <button type="button" class="btn-remove-variant">❌ Quitar variante</button>
+        <hr>
+    `
+        // agregar valores iniciales
+        const valuesList = wrapper.querySelector('.values-list')
+        values.forEach(v => {
+            const vdiv = document.createElement('div')
+            vdiv.classList.add('value-item')
+            vdiv.innerHTML = `<input type="text" class="value-input" placeholder="Valor (ej: M)" value="${v}"> <button type="button" class="btn-remove-value">❌</button>`
+            valuesList.appendChild(vdiv)
+        })
+
+        variantTypeIndex++
+        return wrapper
+    }
+
+    document.getElementById('btn-agregar-variant-type').addEventListener('click', function () {
+        const container = document.getElementById('variant-types-container')
+        const dom = crearVariantTypeDOM()
+        container.appendChild(dom)
+        // generar combos tras agregar
+        generarCombinacionesDebounced()
+    })
+
+    // Delegación de eventos para variantes
+    document.getElementById('variant-types-container').addEventListener('click', function (e) {
+        // agregar valor
+        if (e.target.matches('.btn-add-value')) {
+            const parent = e.target.closest('.variant-type')
+            const vl = parent.querySelector('.values-list')
+            const vdiv = document.createElement('div')
+            vdiv.classList.add('value-item')
+            vdiv.innerHTML = `<input type="text" class="value-input" placeholder="Valor (ej: S)"> <button type="button" class="btn-remove-value">❌</button>`
+            vl.appendChild(vdiv)
+            generarCombinacionesDebounced()
+        }
+
+        // quitar valor
+        if (e.target.matches('.btn-remove-value')) {
+            e.target.parentElement.remove()
+            generarCombinacionesDebounced()
+        }
+
+        // quitar variante
+        if (e.target.matches('.btn-remove-variant')) {
+            e.target.closest('.variant-type').remove()
+            generarCombinacionesDebounced()
+        }
+    })
+
+    // Debounce helper para no recalcular a cada tecla inmediatamente
+    function debounce(fn, wait) {
+        let t = null
+        return function (...args) {
+            clearTimeout(t)
+            t = setTimeout(() => fn.apply(this, args), wait)
+        }
+    }
+
+    /* ---------------------------
+       Generar combinaciones automáticamente
+       --------------------------- */
+
+    function cartesianProduct(arrays) {
+        // arrays: [ ['S','M'], ['Rojo','Azul'] ] -> devuelve lista de arrays con combinaciones
+        if (arrays.length === 0) return []
+        return arrays.reduce((a, b) => {
+            const res = []
+            for (const x of a) {
+                for (const y of b) {
+                    res.push(x.concat([y]))
+                }
+            }
+            return res
+        }, [[]])
+    }
+
+    const variantMessageEl = document.getElementById('variant-message')
+
+    function generarCombinaciones() {
+        const types = Array.from(document.querySelectorAll('.variant-type'))
+
+        // Si no hay variantes, limpiar
+        if (types.length === 0) {
+            document.getElementById('combinaciones-container').innerHTML = ''
+            document.getElementById('variants_info').value = JSON.stringify([])
+            document.getElementById('variant_combinations').value = JSON.stringify([])
+            variantMessageEl.textContent = ''
+            return
+        }
+
+        const typesData = []
+
+        for (const t of types) {
+            const nameInput = t.querySelector('.variant-name')
+            const name = nameInput ? nameInput.value.trim() : ''
+
+            const valueInputs = Array.from(t.querySelectorAll('.value-input'))
+            const values = valueInputs
+                .map(i => i.value.trim())
+                .filter(v => v !== '')
+
+            if (!name) {
+                // no generar si falta nombre
+                variantMessageEl.textContent = 'Todas las variantes deben tener nombre (ej: Talla, Color).'
+                // limpiar combinaciones previas
+                document.getElementById('combinaciones-container').innerHTML = ''
+                document.getElementById('variants_info').value = JSON.stringify([])
+                document.getElementById('variant_combinations').value = JSON.stringify([])
+                return
+            }
+
+            if (values.length === 0) {
+                variantMessageEl.textContent = `La variante "${name}" debe tener al menos un valor.`
+                document.getElementById('combinaciones-container').innerHTML = ''
+                document.getElementById('variants_info').value = JSON.stringify([])
+                document.getElementById('variant_combinations').value = JSON.stringify([])
+                return
+            }
+
+            typesData.push({name, values})
+        }
+
+        // Validación pasada
+        variantMessageEl.textContent = ''
+
+        const arraysOfValues = typesData.map(t => t.values)
+        const product = cartesianProduct(arraysOfValues)
+
+        const container = document.getElementById('combinaciones-container')
+        container.innerHTML = ''
+
+        const table = document.createElement('table')
+        table.border = "1"
+        table.style.borderCollapse = 'collapse'
+        table.style.width = '100%'
+
+        const thead = document.createElement('thead')
+        const headRow = document.createElement('tr')
+
+        // Encabezados dinámicos (Talla, Color, etc)
+        typesData.forEach(t => {
+            const th = document.createElement('th')
+            th.textContent = t.name
+            headRow.appendChild(th)
+        })
+
+        // Encabezados fijos (sin "Acciones")
+        const fixedHeaders = ['Precio extra', 'Stock']
+        fixedHeaders.forEach(text => {
+            const th = document.createElement('th')
+            th.textContent = text
+            headRow.appendChild(th)
+        })
+
+        thead.appendChild(headRow)
+        table.appendChild(thead)
+
+        const tbody = document.createElement('tbody')
+
+        product.forEach(combArr => {
+            const tr = document.createElement('tr')
+
+            const opcionesObj = {}
+
+            combArr.forEach((val, i) => {
+                const td = document.createElement('td')
+                td.textContent = val
+                tr.appendChild(td)
+                opcionesObj[typesData[i].name] = val
+            })
+
+            // inputs para precio extra y stock
+           
+
+            const tdPrecio = document.createElement('td')
+            tdPrecio.innerHTML = `<input type="number" step="0.01" min="0" class="input-precio" value="0">`
+            tr.appendChild(tdPrecio)
+
+            const tdStock = document.createElement('td')
+            tdStock.innerHTML = `<input type="number" min="0" class="input-stock" value="0">`
+            tr.appendChild(tdStock)
+
+            tr.dataset.opciones = JSON.stringify(opcionesObj)
+            tbody.appendChild(tr)
+        })
+
+        table.appendChild(tbody)
+        container.appendChild(table)
+
+        // Guardamos info de variantes (para backend) y limpiamos combinaciones ocultas:
+        document.getElementById('variants_info').value = JSON.stringify(typesData)
+
+        // También guardamos las combinaciones con valores por defecto (para cuando el usuario haga submit sin tocar filas)
+        const combosForHidden = product.map(combArr => {
+            const opciones = {}
+            combArr.forEach((val, i) => opciones[typesData[i].name] = val)
+            return {
+                opciones,
+                sku: null,
+                precio_extra: 0,
+                stock: 0
+            }
+        })
+        document.getElementById('variant_combinations').value = JSON.stringify(combosForHidden)
+    }
+
+    // Debounced versión
+    const generarCombinacionesDebounced = debounce(generarCombinaciones, 250)
+
+    // Re-generar cuando el usuario escriba en nombres o valores de variantes
+    document.getElementById('variant-types-container').addEventListener('input', function (e) {
+        // Solo reaccionar a inputs de nombre/valor
+        if (e.target.matches('.variant-name') || e.target.matches('.value-input')) {
+            generarCombinacionesDebounced()
+        }
+    })
+
+    // Al cargar la página (si hubiera variantes pre-renderizadas) generamos combos
+    document.addEventListener('DOMContentLoaded', function () {
+        generarCombinaciones()
+    })
+
+    /* ---------------------------
+       Antes de enviar el form, empaquetamos las combinaciones en JSON y lo ponemos en hidden
+       (aquí tomamos los valores reales que el usuario puso en la tabla)
+       --------------------------- */
+    document.getElementById('form-crear-producto').addEventListener('submit', function (e) {
+        const rows = Array.from(document.querySelectorAll('#combinaciones-container tbody tr'))
+        const combos = rows.map(r => {
+            const opciones = JSON.parse(r.dataset.opciones || '{}')
+            const skuEl = r.querySelector('.input-sku')
+            const precioEl = r.querySelector('.input-precio')
+            const stockEl = r.querySelector('.input-stock')
+
+            const sku = skuEl ? (skuEl.value.trim() || null) : null
+            const precio_extra = precioEl ? (parseFloat(precioEl.value) || 0) : 0
+            const stock = stockEl ? (parseInt(stockEl.value) || 0) : 0
+            return {
+                opciones,
+                sku,
+                precio_extra,
+                stock
+            }
+        })
+
+        document.getElementById('variant_combinations').value = JSON.stringify(combos)
+        // Nota: si no hay combinaciones, quedará como []
+    })
+</script>

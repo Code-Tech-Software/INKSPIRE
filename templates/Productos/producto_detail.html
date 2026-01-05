@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ producto.nombre }}</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: auto;
+        }
+
+        .product {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+
+        .main-img {
+            width: 100%;
+            border: 1px solid #ddd;
+        }
+
+        .thumbs img {
+            width: 80px;
+            margin: 5px;
+            cursor: pointer;
+            border: 1px solid #ccc;
+        }
+
+        .option-group {
+            margin-top: 20px;
+        }
+
+        .option-btn {
+            padding: 10px 16px;
+            margin: 5px;
+            border: 1px solid #333;
+            background: white;
+            cursor: pointer;
+        }
+
+        .option-btn.selected {
+            background: black;
+            color: white;
+        }
+
+        .option-btn.disabled {
+            background: #eee;
+            color: #999;
+            cursor: not-allowed;
+            border-color: #ccc;
+        }
+
+        #precio {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+
+        #stock {
+            margin-bottom: 15px;
+        }
+
+        .qty-box {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 15px 0;
+        }
+
+        .qty-box button {
+            padding: 6px 12px;
+            cursor: pointer;
+        }
+
+        .qty-box input {
+            width: 60px;
+            text-align: center;
+        }
+
+        .btn-cart {
+            padding: 14px 20px;
+            background: black;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-cart:disabled {
+            background: #aaa;
+            cursor: not-allowed;
+        }
+
+        .descripcion {
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <a href="{% url 'productos:lista' %}">⬅ Volver</a>
+
+    <div class="product">
+
+        <!-- 🖼 IMÁGENES -->
+        <div>
+            {% if producto.imagenes.first %}
+                <img id="mainImage"
+                     src="{{ producto.imagenes.first.imagen.url }}"
+                     class="main-img">
+            {% endif %}
+
+            <div class="thumbs">
+                {% for img in producto.imagenes.all %}
+                    <img src="{{ img.imagen.url }}"
+                         onclick="changeImage('{{ img.imagen.url }}')">
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- ℹ️ INFO -->
+        <div>
+            <h1>{{ producto.nombre }}</h1>
+
+            <p id="precio">$ {{ producto.precio_base }}</p>
+            <p id="stock"></p>
+
+            <!-- 🔘 VARIANTES (solo si existen) -->
+            {% if producto.variants.exists %}
+                {% for option_type in producto.option_types.all %}
+                    <div class="option-group">
+                        <h4>{{ option_type.nombre }}</h4>
+
+                        {% for value in option_type.values.all %}
+                            <button
+                                type="button"
+                                class="option-btn"
+                                data-option="{{ option_type.nombre }}"
+                                data-value="{{ value.valor }}">
+                                {{ value.valor }}
+                            </button>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <!-- 🔢 CANTIDAD -->
+            <div class="qty-box">
+                <button type="button" onclick="cambiarCantidad(-1)">−</button>
+
+                <input
+                    type="number"
+                    id="cantidad"
+                    value="1"
+                    min="1"
+                >
+
+                <button type="button" onclick="cambiarCantidad(1)">+</button>
+            </div>
+
+            <!-- 🛒 CARRITO -->
+            <button
+                id="addToCart"
+                class="btn-cart"
+                {% if producto.variants.exists %}disabled{% endif %}
+            >
+                Agregar al carrito
+            </button>
+        </div>
+    </div>
+
+    <!-- 📄 DESCRIPCIÓN -->
+    <div class="descripcion">
+        <h2>Descripción</h2>
+        <p>{{ producto.descripcion }}</p>
+    </div>
+
+</div>
+
+<!-- 🔥 JS -->
+<script>
+const variantes = {{ variantes_json|safe }};
+const precioBase = parseFloat("{{ producto.precio_base }}");
+const tieneVariantes = variantes.length > 0;
+
+let seleccion = {};
+let varianteActual = null;
+
+const inputCantidad = document.getElementById('cantidad');
+const btnCart = document.getElementById('addToCart');
+const precioEl = document.getElementById('precio');
+const stockEl = document.getElementById('stock');
+
+function changeImage(src) {
+    document.getElementById('mainImage').src = src;
+}
+
+// 🔢 Cantidad
+function cambiarCantidad(delta) {
+    let valor = parseInt(inputCantidad.value) || 1;
+    valor += delta;
+
+    if (valor < 1) valor = 1;
+
+    let maxStock = obtenerStock();
+    if (maxStock !== null && valor > maxStock) {
+        valor = maxStock;
+    }
+
+    inputCantidad.value = valor;
+}
+
+inputCantidad.addEventListener('change', () => {
+    let valor = parseInt(inputCantidad.value) || 1;
+    if (valor < 1) valor = 1;
+
+    let maxStock = obtenerStock();
+    if (maxStock !== null && valor > maxStock) {
+        valor = maxStock;
+    }
+
+    inputCantidad.value = valor;
+});
+
+function obtenerStock() {
+    if (tieneVariantes && varianteActual) {
+        return varianteActual.stock;
+    }
+    return null; // sin límite
+}
+
+// 🔘 Botones de variantes
+document.querySelectorAll('.option-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        if (btn.classList.contains('disabled')) return;
+
+        const opt = btn.dataset.option;
+        const val = btn.dataset.value;
+
+        if (btn.classList.contains('selected')) {
+            btn.classList.remove('selected');
+            delete seleccion[opt];
+        } else {
+            document.querySelectorAll(`.option-btn[data-option="${opt}"]`)
+                .forEach(b => b.classList.remove('selected'));
+
+            btn.classList.add('selected');
+            seleccion[opt] = val;
+        }
+
+        actualizar();
+    });
+});
+
+function actualizar() {
+    actualizarBotones();
+
+    varianteActual = buscarVarianteCompleta();
+
+    if (tieneVariantes) {
+        if (varianteActual) {
+            precioEl.innerText =
+                `$ ${(precioBase + varianteActual.precio_extra).toFixed(2)}`;
+
+            stockEl.innerText =
+                `Stock disponible: ${varianteActual.stock}`;
+
+            btnCart.disabled = varianteActual.stock <= 0;
+        } else {
+            precioEl.innerText = `$ ${precioBase.toFixed(2)}`;
+            stockEl.innerText = '';
+            btnCart.disabled = true;
+        }
+    } else {
+        // 🔥 Producto sin variantes
+        btnCart.disabled = false;
+    }
+}
+
+function buscarVarianteCompleta() {
+    return variantes.find(v =>
+        Object.keys(v.opciones).length === Object.keys(seleccion).length &&
+        Object.keys(seleccion).every(
+            k => v.opciones[k] === seleccion[k]
+        )
+    );
+}
+
+function actualizarBotones() {
+    if (!tieneVariantes) return;
+
+    document.querySelectorAll('.option-btn').forEach(btn => {
+        const opt = btn.dataset.option;
+        const val = btn.dataset.value;
+
+        let posible = variantes.some(v =>
+            v.opciones[opt] === val &&
+            Object.keys(seleccion).every(
+                k => k === opt || v.opciones[k] === seleccion[k]
+            )
+        );
+
+        btn.classList.toggle('disabled', !posible);
+    });
+}
+</script>
+
+
+<script>
+document.getElementById('addToCart').addEventListener('click', () => {
+    const cantidad = document.getElementById('cantidad').value;
+
+    let data = new FormData();
+    data.append('producto_id', '{{ producto.id_producto }}');
+    data.append('cantidad', cantidad);
+
+    if (varianteActual) {
+        data.append('variante_id', varianteActual.id);
+    }
+
+    fetch("{% url 'productos:agregar_carrito' %}", {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: data
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.error) {
+            alert(data.error);
+        } else {
+            alert('Producto agregado al carrito');
+        }
+    });
+});
+</script>
+
+
+
+</body>
+</html>

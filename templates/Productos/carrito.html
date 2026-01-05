@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Carrito</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 30px;
+        }
+
+        th, td {
+            border-bottom: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background: #f5f5f5;
+        }
+
+        .total {
+            text-align: right;
+            font-size: 22px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 10px 16px;
+            background: black;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .empty {
+            text-align: center;
+            margin-top: 60px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <h1>🛒 Tu carrito</h1>
+
+    {% if items %}
+        <table>
+            <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Variante</th>
+                <th>Precio</th>
+                <th>Cantidad</th>
+                <th>Subtotal</th>
+                <th>Eliminar</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for row in items %}
+                <tr data-item="{{ row.item.id_item }}">
+
+                    <td>{{ row.item.producto.nombre }}</td>
+
+                    <td>
+                        {% if row.item.variante %}
+                            {% for k, v in row.item.variante.opciones.items %}
+                                {{ k }}: {{ v }}<br>
+                            {% endfor %}
+                        {% else %}
+                            —
+                        {% endif %}
+                    </td>
+
+                    <td>$ {{ row.precio_unitario }}</td>
+
+                    <td>
+                        <button onclick="cambiarCantidad('{{ row.item.id_item }}', -1)">−</button>
+
+                        <input
+                                type="number"
+                                value="{{ row.item.cantidad }}"
+                                min="1"
+                                onchange="setCantidad('{{ row.item.id_item }}', this.value)"
+                                style="width:60px; text-align:center;"
+                        >
+
+                        <button onclick="cambiarCantidad('{{ row.item.id_item }}', 1)">+</button>
+                    </td>
+
+                    <td id="subtotal-{{ row.item.id_item }}">
+                        $ {{ row.subtotal }}
+                    </td>
+
+                    <td>
+                        <button onclick="eliminarItem('{{ row.item.id_item }}')">
+                            ❌
+                        </button>
+                    </td>
+
+                </tr>
+            {% endfor %}
+            </tbody>
+
+        </table>
+
+        <div class="total">
+            <strong>Total: <span id="total">$ {{ total }}</span></strong>
+        </div>
+
+        <div style="margin-top:30px; text-align:right;">
+            <button class="btn">Continuar al checkout</button>
+        </div>
+
+    {% else %}
+        <div class="empty">
+            <h2>Tu carrito está vacío</h2>
+            <a href="{% url 'productos:lista' %}">Ver productos</a>
+        </div>
+    {% endif %}
+
+</div>
+
+
+<script>
+function cambiarCantidad(itemId, delta) {
+    const input = document.querySelector(
+        `tr[data-item="${itemId}"] input`
+    );
+
+    let nuevaCantidad = parseInt(input.value) + delta;
+    if (nuevaCantidad < 1) nuevaCantidad = 1;
+
+    actualizarCantidad(itemId, nuevaCantidad);
+}
+
+function setCantidad(itemId, cantidad) {
+    cantidad = parseInt(cantidad);
+    if (cantidad < 1) cantidad = 1;
+
+    actualizarCantidad(itemId, cantidad);
+}
+
+function actualizarCantidad(itemId, cantidad) {
+    const data = new FormData();
+    data.append('item_id', itemId);
+    data.append('cantidad', cantidad);
+
+    fetch("{% url 'productos:actualizar_item_carrito' %}", {
+        method: 'POST',
+        headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+        body: data
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.error) {
+            alert(data.error);
+            return;
+        }
+
+        document.querySelector(
+            `tr[data-item="${itemId}"] input`
+        ).value = data.cantidad;
+
+        document.getElementById(
+            `subtotal-${itemId}`
+        ).innerText = '$ ' + data.subtotal.toFixed(2);
+
+        document.getElementById('total').innerText =
+            '$ ' + data.total.toFixed(2);
+    });
+}
+
+function eliminarItem(itemId) {
+    if (!confirm('¿Eliminar este producto?')) return;
+
+    const data = new FormData();
+    data.append('item_id', itemId);
+
+    fetch("{% url 'productos:eliminar_item_carrito' %}", {
+        method: 'POST',
+        headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+        body: data
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.error) {
+            alert(data.error);
+            return;
+        }
+
+        document.querySelector(
+            `tr[data-item="${itemId}"]`
+        ).remove();
+
+        document.getElementById('total').innerText =
+            '$ ' + data.total.toFixed(2);
+    });
+}
+</script>
+
+
+</body>
+</html>

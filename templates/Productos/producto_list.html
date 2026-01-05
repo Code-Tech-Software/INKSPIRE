@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Productos</title>
+</head>
+<body>
+
+<h1>Productos</h1>
+
+<div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:20px;">
+    {% for producto in productos %}
+        <div style="border:1px solid #ccc; padding:10px;">
+            
+            {% if producto.imagenes.first %}
+                <img src="{{ producto.imagenes.first.imagen.url }}"
+                     alt="{{ producto.nombre }}"
+                     style="width:100%; height:200px; object-fit:cover;">
+            {% endif %}
+
+            <h3>{{ producto.nombre }}</h3>
+            <p>{{ producto.descripcion_corta }}</p>
+            <p><strong>${{ producto.precio_base }}</strong></p>
+
+            <a href="{% url 'productos:detalle' producto.id_producto %}">
+                Ver detalle
+            </a>
+        </div>
+    {% empty %}
+        <p>No hay productos disponibles.</p>
+    {% endfor %}
+</div>
+
+</body>
+</html>

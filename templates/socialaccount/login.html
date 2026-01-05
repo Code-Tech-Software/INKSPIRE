@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% load socialaccount %}
+
+{% block title %}Iniciar sesión con Google{% endblock %}
+
+{% block content %}
+    <style>
+        .social-login-container {
+            max-width: 400px;
+            margin: 80px auto;
+            padding: 30px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .google-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #4285F4;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .google-btn:hover {
+            background-color: #357ae8;
+        }
+    </style>
+
+
+    <div class="social-login-container">
+
+        <h2>Iniciar sesión con Google</h2>
+
+        <p>
+            Estás a punto de iniciar sesión usando tu cuenta de Google.
+        </p>
+
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="google-btn">
+                Continuar con Google
+            </button>
+        </form>
+
+        <p style="margin-top: 20px;">
+            <a href="{% url 'login' %}">Volver</a>
+        </p>
+
+    </div>
+{% endblock %}
