@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,7 +25,10 @@ SECRET_KEY = 'django-insecure--z#e*oh_axwvilt7b33fws2l4^*(yk1o$0k4wec1=u(_ic=w27
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
+CSRF_TRUSTED_ORIGINS = [
+    "https://inkspire.up.railway.app",
+]
 
 # Application definition
 
@@ -37,13 +41,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'django.contrib.sites',  # opcional si usas allauth, pero no hace daño
-
+    'whitenoise.runserver_nostatic',
     # allauth
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
-
     'Usuarios',
     'Productos',
 
@@ -56,6 +59,7 @@ AUTHENTICATION_BACKENDS = (
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -116,6 +120,14 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+STORAGES = {
+    # ...
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
+
+
 AUTH_USER_MODEL = 'Usuarios.Usuario'
 
 # Internationalization
@@ -147,10 +159,10 @@ ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 
-ACCOUNT_ADAPTER = 'Usuarios.adapters.CustomAccountAdapter'#lo nuevo
-SOCIALACCOUNT_ADAPTER = 'Usuarios.social_adapters.CustomSocialAccountAdapter'#lo nuevo
+ACCOUNT_ADAPTER = 'Usuarios.adapters.CustomAccountAdapter'  # lo nuevo
+SOCIALACCOUNT_ADAPTER = 'Usuarios.social_adapters.CustomSocialAccountAdapter'  # lo nuevo
 
-
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # recolecta todo lo estatic
 # Para evitar conflictos
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 
@@ -164,4 +176,3 @@ MEDIA_ROOT = BASE_DIR / 'media'  # si BASE_DIR es Path, si es str: os.path.join(
 TEMPLATES[0]['DIRS'] = [BASE_DIR / 'templates']  # ajusta según tu BASE_DIR
 
 STATIC_URL = 'static/'
-

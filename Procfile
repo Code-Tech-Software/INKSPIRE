@@ -1,1 +1,1 @@
-web:  gunicorn INKSPIRE.wsgi
+web:  python manage.py collectstatic && gunicorn INKSPIRE.wsgi
