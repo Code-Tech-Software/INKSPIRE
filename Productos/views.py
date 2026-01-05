@@ -70,10 +70,9 @@ def crear_producto(request):
                     )
 
             # redirigir a la misma página (o a detalle)
-            return redirect('crear_producto')
+            return redirect('productos:crear_producto')
 
         else:
-            # error: re-render con mensajes simples
             return render(request, 'productos/crear_producto.html', {
                 'producto_form': producto_form,
                 'form_errors': producto_form.errors,
