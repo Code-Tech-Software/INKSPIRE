@@ -23,42 +23,42 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='carritoitem',
             name='carrito',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='items', to='Productos.carrito'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='items', to='productos.carrito'),
         ),
         migrations.AddField(
             model_name='optionvalue',
             name='option_type',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='values', to='Productos.optiontype'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='values', to='productos.optiontype'),
         ),
         migrations.AddField(
             model_name='producto',
             name='categoria',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='productos', to='Productos.categoria'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='productos', to='productos.categoria'),
         ),
         migrations.AddField(
             model_name='optiontype',
             name='producto',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='option_types', to='Productos.producto'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='option_types', to='productos.producto'),
         ),
         migrations.AddField(
             model_name='imagenproducto',
             name='producto',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='imagenes', to='Productos.producto'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='imagenes', to='productos.producto'),
         ),
         migrations.AddField(
             model_name='carritoitem',
             name='producto',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='Productos.producto'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='productos.producto'),
         ),
         migrations.AddField(
             model_name='productvariant',
             name='producto',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='variants', to='Productos.producto'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='variants', to='productos.producto'),
         ),
         migrations.AddField(
             model_name='carritoitem',
             name='variante',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='Productos.productvariant'),
+            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='productos.productvariant'),
         ),
         migrations.AlterUniqueTogether(
             name='productvariant',
