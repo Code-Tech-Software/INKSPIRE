@@ -9,7 +9,13 @@ from .models import Usuario
 from django.shortcuts import render
 
 def home_view(request):
-    return render(request, 'home.html')
+    data = {
+        'footer': 'true',
+    }
+    return render(request, 'home/index.html', data)
+
+
+
 
 from django.contrib.auth import login, authenticate
 

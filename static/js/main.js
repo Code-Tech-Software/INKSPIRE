@@ -389,7 +389,7 @@
     slidesPerGroup: 1,
     speed: 1500,
     loop: false,
-    autoplay: false,
+    // autoplay: false,
     loopFillGroupWithBlank: true,
     centeredSlides: false,
     breakpoints: {
