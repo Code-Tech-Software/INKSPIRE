@@ -2,15 +2,24 @@ from django.urls import path
 from django.contrib.auth import views as auth_views
 from . import views
 from .forms import EmailAuthenticationForm
+from .views import LoginRegistroView
+
 urlpatterns = [
     # Registro y perfil
     path('', views.home_view, name='home'),
+    path('account', views.account, name='account'),
+    #path('login/', auth_views.LoginView.as_view(template_name='registration/login.html',authentication_form=EmailAuthenticationForm), name='login'),
+    path('about', views.about, name='about'),
+    path('faq', views.faq, name='faq'),
+    path('contact', views.contact, name='contact'),
+
+    path('login/', LoginRegistroView.as_view(), name='login'),
     path('registro/', views.RegistroView.as_view(), name='registro'),
     path('perfil/', views.perfil_view, name='perfil'),
     path('perfil/editar/', views.editar_perfil_view, name='editar_perfil'),
 
     # Login / Logout usando vistas incorporadas
-    path('login/',auth_views.LoginView.as_view(template_name='registration/login.html',authentication_form=EmailAuthenticationForm),name='login'),
+
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
 
     # Cambio de contraseña

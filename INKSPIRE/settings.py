@@ -1,4 +1,3 @@
-
 from pathlib import Path
 import dj_database_url
 import os
@@ -22,7 +21,6 @@ CSRF_TRUSTED_ORIGINS = [
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 USE_X_FORWARDED_HOST = True
-
 
 # Application definition
 
@@ -81,6 +79,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'Productos.context_processors.categorias_globales',
             ],
         },
     },
@@ -91,17 +90,15 @@ WSGI_APPLICATION = 'INKSPIRE.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
-#DATABASES = {
+# DATABASES = {
 #    'default': dj_database_url.config(default=os.getenv("DATABASE_URL"))
-#}
-
+# }
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-         'NAME': BASE_DIR / 'db.sqlite3',
-    }
+   'default': dj_database_url.config(default=os.getenv("DATABASE_URL"))
 }
+
+
 
 # DATABASES = {
 #     'default': {
@@ -109,7 +106,6 @@ DATABASES = {
 #         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
-
 
 
 # Password validation
@@ -145,7 +141,6 @@ CLOUDINARY_STORAGE = {
     'API_SECRET': os.getenv('CLOUDINARY_API_SECRET'),
 }
 
-
 AUTH_USER_MODEL = 'Usuarios.Usuario'
 
 # Internationalization
@@ -156,7 +151,6 @@ LANGUAGE_CODE = 'es'
 USE_I18N = True  #
 USE_L10N = True  #
 USE_TZ = True  #
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
@@ -180,9 +174,7 @@ SOCIALACCOUNT_ADAPTER = 'Usuarios.social_adapters.CustomSocialAccountAdapter'
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 SOCIALACCOUNT_LOGIN_ON_GET = True
 
-
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # recolecta todo lo estatic
-
 
 # MEDIA (para ImageField)
 MEDIA_URL = '/media/'
@@ -193,9 +185,6 @@ TEMPLATES[0]['DIRS'] = [BASE_DIR / 'templates']  # ajusta según tu BASE_DIR
 
 STATIC_URL = 'static/'
 
-
-
 STATICFILES_DIRS = [
-    BASE_DIR / "static",   # carpeta estática en la raíz del proyecto
+    BASE_DIR / "static",  # carpeta estática en la raíz del proyecto
 ]
-

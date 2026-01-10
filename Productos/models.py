@@ -43,6 +43,9 @@ class Producto(models.Model):
     def __str__(self):
         return self.nombre
 
+    def imagen_principal(self):
+        return self.imagenes.filter(es_principal=True).first()
+
 
 class ImagenProducto(models.Model):
     id_imagen = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -88,7 +91,7 @@ class ProductVariant(models.Model):
             vals = " / ".join(str(v) for v in self.opciones.values())
         else:
             vals = str(self.opciones)
-        return f"{self.producto.nombre} — {vals}"
+        return f"{vals}"
 
     def clean(self):
         if not isinstance(self.opciones, dict):

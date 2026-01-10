@@ -1,0 +1,430 @@
+{% extends "layout/layout.html" %}
+
+{% block content %}
+    <style>
+        .option-btn {
+            cursor: pointer;
+        }
+
+        /* CONTORNO NEGRO AL SELECCIONAR */
+        .option-btn.selected {
+            border: 1px solid #000 !important;
+            color: #000;
+            background-color: transparent;
+        }
+
+        /* mantener contorno al hover */
+        .option-btn.selected:hover {
+            border-color: #000;
+        }
+
+        /* OPCIONES DESHABILITADAS */
+        .option-btn.disabled {
+            opacity: 0.35;
+            pointer-events: none;
+            cursor: not-allowed;
+        }
+
+        /* Ajuste de pixeles para imagen */
+        .ajuste-product-img {
+            width: 440px;
+            height: 500px;
+            object-fit: cover; /* NO se deforma */
+        }
+
+
+    </style>
+    <!-- ..::Product-details Section Start Here::.. -->
+    <div class="rts-product-details-section section-gap">
+        <div class="container">
+            <div class="details-product-area mb--70">
+                <div class="product-thumb-area">
+                    <div class="cursor"></div>
+
+                    {# -- MAIN IMAGE WRAPPERS: generados desde las imágenes del producto -- #}
+                    {% for img in producto.imagenes.all %}
+                        <div class="thumb-wrapper img-{{ forloop.counter }} filterd-items {% if not forloop.first %}hide{% else %}one filterd-items figure{% endif %}">
+                            <div class="product-thumb zoom" onmousemove="zoom(event)"
+                                 style="background-image: url('{{ img.imagen.url }}')">
+                                <img id="{% if forloop.first %}mainImage{% endif %}" src="{{ img.imagen.url }}"
+                                     alt="product-thumb" class="ajuste-product-img">
+                            </div>
+                        </div>
+                    {% empty %}
+                        {# fallback si no hay imágenes #}
+                        <div class="thumb-wrapper one filterd-items figure">
+                            <div class="product-thumb zoom" onmousemove="zoom(event)"
+                                 style="background-image: url('/static/images/products/product-details.jpg')">
+                                <img id="mainImage" src="/static/images/products/product-details.jpg"
+                                     alt="product-thumb" class="ajuste-product-img">
+                            </div>
+                        </div>
+                    {% endfor %}
+
+                    <div class="product-thumb-filter-group">
+                        {# miniaturas para cambiar imagen principal #}
+                        {% for img in producto.imagenes.all %}
+                            <div class="thumb-filter filter-btn {% if forloop.first %}active{% endif %}"
+                                 data-src="{{ img.imagen.url }}" data-target=".img-{{ forloop.counter }}">
+                                <img src="{{ img.imagen.url }}" alt="product-thumb-filter">
+                            </div>
+                        {% empty %}
+                            <div class="thumb-filter filter-btn active"
+                                 data-src="/static/images/products/product-details.jpg" data-target=".one">
+                                <img src="/static/images/products/product-details.jpg" alt="product-thumb-filter">
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="contents">
+                    <div class="product-status">
+                        <span class="product-catagory">{{ producto.categoria.nombre }}</span>
+                        <div class="rating-stars-group">
+                            <div class="rating-star"><i class="fas fa-star"></i></div>
+                            <div class="rating-star"><i class="fas fa-star"></i></div>
+                            <div class="rating-star"><i class="fas fa-star"></i></div>
+                            <div class="rating-star"><i class="fas fa-star"></i></div>
+                            <div class="rating-star"><i class="fas fa-star"></i></div>
+                            {#<div class="rating-star"><i class="fas fa-star-half-alt"></i></div>#}
+                            <span></span>
+                        </div>
+                    </div>
+
+                    <h2 class="product-title">{{ producto.nombre }} <span class="stock" id="stockLabel"></span></h2>
+                    <span class="product-price" id="priceEl">${{ producto.precio_base }}</span>
+                    <p>{{ producto.descripcion_corta }}</p>
+
+                    {# ---------- VARIANTES (option types -> option values) ---------- #}
+                    {% for option_type in producto.option_types.all %}
+                        <div class="action-item3 option-group" data-option-name="{{ option_type.nombre }}">
+                            <div class="action-top">
+                            <span class="action-title">{{ option_type.nombre }} :
+                                <strong id="selected-{{ option_type.id }}"></strong></span>
+                            </div>
+
+                            {% for value in option_type.values.all %}
+                                <div class="color-item2">
+                                    <div
+                                            class="size option-btn"
+                                            data-option="{{ option_type.nombre }}"
+                                            data-value="{{ value.valor }}"
+                                            data-bs-toggle="tooltip"
+                                            data-bs-placement="top"
+                                            title="{{ value.valor }}"
+                                    >
+                                        {{ value.valor }}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+
+                    {# cantidad y acciones #}
+                    <div class="product-bottom-action">
+                        <div class="cart-edit">
+                            <div class="quantity-edit action-item">
+                                <button class="button" id="qtyMinus"><i class="fal fa-minus minus"></i></button>
+                                <input type="text" class="input" id="cantidad" value="01"/>
+                                <button class="button plus" id="qtyPlus">+<i class="fal fa-plus plus"></i></button>
+                            </div>
+                        </div>
+
+                        <a href="#" id="addToCart" class="addto-cart-btn action-item"><i class="rt-basket-shopping"></i>
+                            Añadir Carrito</a>
+                        <a href="#" class="wishlist-btn action-item"><i class="rt-heart"></i></a>
+                    </div>
+
+                    <div class="product-uniques">
+                        <span class="sku product-unipue"><span>SKU: </span> {{ producto.sku }}</span>
+                        <span class="catagorys product-unipue"><span>Categorías: </span> {{ producto.categoria.nombre }}</span>
+                        <span class="tags product-unipue"><span>Tags: </span>.</span>
+                    </div>
+
+                    <div class="share-social">
+                        <span>Compartir:</span>
+                        <a class="platform" href="https://www.facebook.com" target="_blank">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+
+                        <a class="platform" href="https://wa.me/521XXXXXXXXXX" target="_blank">
+                            <i class="fab fa-whatsapp"></i>
+                        </a>
+
+                        <a class="platform" href="https://www.instagram.com" target="_blank">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-full-details-area">
+                <div class="details-filter-bar2">
+                    <button class="details-filter filter-btn active" data-show=".dls-one">Descripción</button>
+                    <button class="details-filter filter-btn" data-show=".dls-two">Información adicional</button>
+                    <button class="details-filter filter-btn" data-show=".dls-three">Reviews (0)</button>
+                </div>
+                <div class="full-details dls-one filterd-items">
+                    <div class="full-details-inner">
+                        <p class="mb--30">{{ producto.descripcion }}</p>
+                    </div>
+                </div>
+                <div class="full-details dls-two filterd-items hide">
+                    <div class="full-details-inner">
+                        <p class="mb--30">Información adicional del producto.</p>
+                    </div>
+                </div>
+                <div class="full-details dls-three filterd-items hide">
+                    <div class="full-details-inner">
+                        <p>Aún no hay reseñas.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="rts-account-section"></div>
+
+    {# ---------- SCRIPTS ---------- #}
+
+    <!-- antes de tu <script> inline -->
+    <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
+    <style>
+        /* regla genérica por si no se aplica el selector anterior */
+        .notyf__toast .notyf__message {
+            color: #000000 !important;
+        }
+    </style>
+    <script>
+        // inicializa Notyf (colócalo antes del resto de tu código JS)
+        const notyf = new Notyf({
+            duration: 2000,
+            
+            position: {x: 'right', y: 'top'},
+            types: [
+                {
+                    type: 'cart',               // tipo personalizado
+                    background: '#dadada',      // color del toast (verde)
+                    icon: {                     // icono usando Font Awesome
+                        className: 'fas fa-shopping-cart',
+                        tagName: 'i',
+                        color: '#000000'
+                    }
+                }
+            ]
+        });
+    </script>
+
+
+    {% csrf_token %}
+    <script>
+        /* datos pasados desde la view */
+        const variantes = {{ variantes_json|safe }};
+        const precioBase = parseFloat("{{ producto.precio_base }}");
+        const tieneVariantes = variantes.length > 0;
+
+        let seleccion = {};          // { "Color": "Blue", "Size": "M" }
+        let varianteActual = null;
+
+        const inputCantidad = document.getElementById('cantidad');
+        const btnCart = document.getElementById('addToCart');
+        const priceEl = document.getElementById('priceEl');
+        const stockLabel = document.getElementById('stockLabel');
+
+        /* --- IMAGENES / MINIATURAS --- */
+        document.querySelectorAll('.thumb-filter').forEach(el => {
+            el.addEventListener('click', (e) => {
+                e.preventDefault();
+                const src = el.dataset.src;
+                const target = el.dataset.target;
+
+                // activar miniatura visualmente
+                document.querySelectorAll('.thumb-filter').forEach(t => t.classList.remove('active'));
+                el.classList.add('active');
+
+                // cambiar imagen principal: actualiza <img id="mainImage"> y background-image de la wrapper target
+                const mainImg = document.getElementById('mainImage');
+                if (mainImg) mainImg.src = src;
+
+                if (target) {
+                    // ocultar todas las wrappers y mostrar la target
+                    document.querySelectorAll('.product-thumb-area .thumb-wrapper').forEach(w => w.classList.add('hide'));
+                    document.querySelectorAll(target).forEach(w => w.classList.remove('hide'));
+                } else {
+                    // si no hay target, solo actualiza background de primer wrapper
+                    const firstWrapper = document.querySelector('.product-thumb-area .thumb-wrapper');
+                    if (firstWrapper) firstWrapper.querySelector('.product-thumb').style.backgroundImage = `url(${src})`;
+                }
+            });
+        });
+
+        /* --- CANTIDAD --- */
+        function actualizarCantidadValor(valor) {
+            let v = parseInt(valor) || 1;
+            if (v < 1) v = 1;
+
+            const maxStock = obtenerStock();
+            if (maxStock !== null && v > maxStock) v = maxStock;
+
+            inputCantidad.value = v;
+        }
+
+
+        function obtenerStock() {
+            if (tieneVariantes && varianteActual) {
+                return varianteActual.stock;
+            }
+            // si producto maneja stock global (no variantes) podrías devolver null o un valor; aquí dejamos ilimitado
+            return null;
+        }
+
+        /* --- BOTONES DE VARIANTES (opciones) --- */
+        document.querySelectorAll('.option-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (btn.classList.contains('disabled')) return;
+
+                const opt = btn.dataset.option;
+                const val = btn.dataset.value;
+
+                // toggle selected for that option group (single-select)
+                const siblings = document.querySelectorAll(`.option-btn[data-option="${opt}"]`);
+                siblings.forEach(s => s.classList.remove('selected'));
+                btn.classList.add('selected');
+
+                // store selection
+                seleccion[opt] = val;
+
+                // update display of selected label if exists
+                const optionGroup = btn.closest('.option-group');
+                if (optionGroup) {
+                    const optName = optionGroup.dataset.optionName;
+                    // buscar elemento #selected-<id> dentro del grupo
+                    const selLabel = optionGroup.querySelector('[id^="selected-"]');
+                    if (selLabel) selLabel.innerText = val;
+                }
+
+                actualizar();
+            });
+        });
+
+        /* ---------- LÓGICA DE VARIANTES ---------- */
+        function actualizar() {
+            actualizarBotones();
+
+            varianteActual = buscarVarianteCompleta();
+
+            if (tieneVariantes) {
+                if (varianteActual) {
+                    // actualizar precio con precio_extra
+                    const precio = (precioBase + parseFloat(varianteActual.precio_extra)).toFixed(2);
+                    priceEl.innerText = `$ ${precio}`;
+                    stockLabel.innerText = ` Stock: ${varianteActual.stock}`;
+                    btnCart.classList.remove('disabled');
+                    btnCart.dataset.varianteId = varianteActual.id;
+                    btnCart.dataset.sku = varianteActual.sku || '';
+                    btnCart.dataset.precio = precio;
+                    btnCart.dataset.stock = varianteActual.stock;
+                    btnCart.style.pointerEvents = varianteActual.stock <= 0 ? 'none' : '';
+                    btnCart.style.opacity = varianteActual.stock <= 0 ? 0.5 : '';
+                } else {
+                    // aún no hay variante completa seleccionada
+                    priceEl.innerText = `$ ${precioBase.toFixed(2)}`;
+                    stockLabel.innerText = '';
+                    btnCart.classList.add('disabled');
+                    btnCart.removeAttribute('data-variante-id');
+                    btnCart.style.pointerEvents = 'none';
+                    btnCart.style.opacity = 0.6;
+                }
+            } else {
+                // sin variantes: habilitar botón
+                priceEl.innerText = `$ ${precioBase.toFixed(2)}`;
+                btnCart.classList.remove('disabled');
+                btnCart.style.pointerEvents = '';
+                btnCart.style.opacity = '';
+            }
+        }
+
+        function buscarVarianteCompleta() {
+            // devuelve la variante que coincida con todas las opciones seleccionadas
+            return variantes.find(v => {
+                if (!v.opciones) return false;
+                const keysVar = Object.keys(v.opciones);
+                const keysSel = Object.keys(seleccion);
+                // require que las longitudes coincidan y los valores coincidan
+                if (keysVar.length !== keysSel.length) return false;
+                return keysSel.every(k => v.opciones[k] === seleccion[k]);
+            }) || null;
+        }
+
+        function actualizarBotones() {
+            if (!tieneVariantes) return;
+            document.querySelectorAll('.option-btn').forEach(btn => {
+                const opt = btn.dataset.option;
+                const val = btn.dataset.value;
+
+                // posible si existe alguna variante que tenga este valor para esta opción
+                let posible = variantes.some(v =>
+                    (v.opciones && v.opciones[opt] === val) &&
+                    Object.keys(seleccion).every(k => k === opt || v.opciones[k] === seleccion[k])
+                );
+
+                btn.classList.toggle('disabled', !posible);
+            });
+        }
+
+        /* inicializar estado (por si no hay variantes) */
+        actualizar();
+
+        /* ---------- AGREGAR AL CARRITO (AJAX) ---------- */
+        btnCart.addEventListener('click', function (e) {
+            e.preventDefault();
+
+            // botón deshabilitado por falta de selección
+            if (this.classList.contains('disabled')) {
+                alert('Selecciona todas las opciones antes de agregar al carrito.');
+                return;
+            }
+
+            const cantidad = parseInt(inputCantidad.value) || 1;
+
+            const data = new FormData();
+            data.append('producto_id', '{{ producto.id_producto }}');
+            data.append('cantidad', cantidad);
+
+            if (varianteActual) {
+                data.append('variante_id', varianteActual.id);
+            }
+
+            // CSRF token: tomó el token renderizado en plantilla (django lo agrega con {% csrf_token %})
+            const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+            fetch("{% url 'productos:agregar_carrito' %}", {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrftoken
+                },
+                body: data
+            })
+                .then(res => res.json())
+                .then(resp => {
+                    if (resp.error) {
+                        notyf.error(resp.error || 'Error al agregar al carrito');
+                    } else {
+                        notyf.open({
+                            type: 'cart',
+                            message: 'Producto agregado al carrito'
+                        });
+                        // 🔥 SINCRONIZA HEADER
+                        if (window.refreshHeaderCart) {
+                            window.refreshHeaderCart();
+                        }
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert('Error al agregar al carrito.');
+                });
+        });
+    </script>
+
+{% endblock content %}

@@ -1,0 +1,208 @@
+{% extends "layout/layout.html" %}
+{% load socialaccount %}
+
+{% block script %}
+    <script src="/static/js/vendors/zoom.js"></script>
+{% endblock %}
+
+{% block content %}
+    <style>
+        .google-contact-wrapper {
+            width: 100%;
+            margin-top: 17px;
+        }
+
+        .google-contact-btn {
+            width: 100%;
+            background: #ffffff;
+            color: #444;
+            border: 1px solid #939393;
+            padding: 12px 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-weight: 500;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            font-size: 18px;
+        }
+
+        .google-contact-btn i {
+            color: #DB4437;
+            font-size: 19px;
+        }
+
+        .google-contact-btn:hover {
+            background: #ffffff;
+            color: #000;
+            border-color: #ccc;
+        }
+
+
+    </style>
+    <div class="login-area">
+        <div class="container">
+            <div class="row">
+
+                <!-- ================= LOGIN ================= -->
+                <div class="col-lg-6 col-md-12 mr-10">
+                    <div class="login-form">
+                        <div class="section-title">
+                            <h2>Iniciar sesión</h2>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-body">
+                                <form method="post">
+                                    {% csrf_token %}
+
+                                    <div class="form">
+                                        <input type="email"
+                                               class="form-control"
+                                               name="email"
+                                               placeholder="Correo electrónico"
+                                               value="{{ data.email|default:'' }}"
+                                               required>
+                                    </div>
+
+                                    <div class="form">
+                                        <div class="password-input">
+                                            <input type="password"
+                                                   class="form-control"
+                                                   name="password"
+                                                   placeholder="Contraseña"
+                                                   required>
+                                            <span class="show-password-input"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="form">
+                                        <button type="submit"
+                                                name="login_submit"
+                                                class="btn">
+                                            Iniciar sesión
+                                        </button>
+                                    </div>
+
+                                    <div class="google-contact-wrapper">
+                                        <a href="{% provider_login_url 'google' %}" class="google-contact-btn">
+                                            <i class="fab fa-google"></i>
+                                            Contactar con Google
+                                        </a>
+                                    </div>
+
+
+                                    {% if login_errors %}
+                                        <div class="alert alert-danger">
+                                            {{ login_errors }}
+                                        </div>
+                                    {% endif %}
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ================= REGISTRO ================= -->
+                <div class="col-lg-6 col-md-12 ml-10">
+                    <div class="register-form">
+                        <div class="section-title">
+                            <h2>Registrarse</h2>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-body">
+                                <form method="post" enctype="multipart/form-data">
+                                    {% csrf_token %}
+
+                                    <div class="form">
+                                        <input type="email"
+                                               class="form-control"
+                                               name="email"
+                                               placeholder="Correo electrónico"
+                                               value="{{ data.email|default:'' }}"
+                                               required>
+                                    </div>
+
+                                    <div class="form">
+                                        <input type="text"
+                                               class="form-control"
+                                               name="first_name"
+                                               placeholder="Nombre"
+                                               value="{{ data.first_name|default:'' }}"
+                                               required>
+                                    </div>
+
+                                    <div class="form">
+                                        <input type="text"
+                                               class="form-control"
+                                               name="last_name"
+                                               placeholder="Apellido"
+                                               value="{{ data.last_name|default:'' }}"
+                                               required>
+                                    </div>
+
+                                    <div class="form">
+                                        <input type="text"
+                                               class="form-control"
+                                               name="telefono"
+                                               placeholder="Teléfono"
+                                               value="{{ data.telefono|default:'' }}">
+
+                                    </div>
+                                    <!-- 
+                                    <div class="form">
+                                        <input type="file"
+                                               class="form-control"
+                                               name="url_imagen">
+                                    </div>
+                                    !-->
+
+                                    <div class="form">
+                                        <div class="password-input">
+                                            <input type="password"
+                                                   class="form-control"
+                                                   name="password1"
+                                                   placeholder="Contraseña"
+                                                   required>
+                                            <span class="show-password-input"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="form">
+                                        <div class="password-input">
+                                            <input type="password"
+                                                   class="form-control"
+                                                   name="password2"
+                                                   placeholder="Confirmar contraseña"
+                                                   required>
+                                            <span class="show-password-input"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="form">
+                                        <button type="submit"
+                                                name="registro_submit"
+                                                class="btn">
+                                            Register
+                                        </button>
+                                    </div>
+
+                                    {% if registro_errors %}
+                                        <div class="alert alert-danger">
+                                            {{ registro_errors }}
+                                        </div>
+                                    {% endif %}
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

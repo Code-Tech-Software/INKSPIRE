@@ -126,6 +126,55 @@ p {
 :root[data-theme=dark] .rts-post .contents .post-title a {
   color: #fff;
 }
+/*/////////////////// ESTILOS MIOS LUIS DAVID */
+/*/////////////////// ESTILOS MIOS LUIS DAVID */
+
+.whatsapp-btn {
+    position: fixed;
+    bottom: 30px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    background-color: #25D366;
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+    z-index: 1;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.whatsapp-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35);
+}
+
+
+
+
+.user-initial {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background-color: #a3a3a3;
+    color: #fff;
+    font-weight: 600;
+    font-size: 17px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    letter-spacing: 1px;
+}
+
+.wishlist-dot {
+    background-color: #ff3737 !important; /*Color del circulo del badge del carrito en moviles */
+}
+
+/*/////////////////// FIN ESTILOS MIOS LUIS DAVID */
+/*/////////////////// FIN ESTILOS MIOS LUIS DAVID */
 
 button {
   outline: none;
@@ -3737,7 +3786,7 @@ i {
   display: none;
   margin-top: auto;
 }
-@media (max-width: 370px) {
+@media (max-width: 480px) {
   .slide-bar .header-action-items {
     display: flex;
   }
@@ -9286,6 +9335,11 @@ tr:first-child {
   background-position-y: 0;
   background-size: cover;
 }
+
+
+
+
+
 .banner .banner-single.bg-image-3-1 {
   background-image: url("../images/banner/Impresion3DBanner.png");
   background-position: center center;
@@ -9308,6 +9362,40 @@ tr:first-child {
     height: 565px;
   }
 }
+
+
+
+
+
+
+
+.banner .banner-single.bg-image-3-SV {
+  background-image: url("../images/banner/SanValentiBanner.png");
+  background-position: center center;
+  background-size: cover;
+  height: 575px;
+  background-repeat: no-repeat;
+  border-radius: 10px;
+}
+.banner .banner-single.bg-image-3-SV::before {
+  display: none;
+}
+.banner .banner-single.bg-image-3-SV.bg-image-9 {
+  background: url("../images/banner/bg-pattern-9.jpg");
+  background-repeat: no-repeat;
+  background-position: bottom right;
+  height: 606px;
+}
+@media (max-width: 1100px) {
+  .banner .banner-single.bg-image-3-SV.bg-image-9 {
+    height: 565px;
+  }
+}
+
+
+
+
+
 .banner .banner-single.bg-image-3-3 {
   background-image: url("../images/banner/CorteLaserBanner.png");
   background-position: center center;
@@ -9329,6 +9417,12 @@ tr:first-child {
     height: 565px;
   }
 }
+
+
+
+
+
+
 .banner .banner-single.bg-image-3-4 {
   background-image: url("../images/banner/EstampadoPlayerasBanner.png");
   background-position: center center;
@@ -9351,6 +9445,11 @@ tr:first-child {
     height: 565px;
   }
 }
+
+
+
+
+
 .banner .banner-single.bg-image-3-2 {
   background-image: url("../images/banner/craftbg.jpg");
   background-position-y: 0;
@@ -21747,4 +21846,3 @@ button {
   bottom: -20px;
 }
 
-/*# sourceMappingURL=main.css.map */

@@ -14,20 +14,23 @@
                         <div class="swiper rts-topSlide1">
                             <div class="swiper-wrapper">
                                 <div class="swiper-slide">
-                                    <h3 class="welcome-text"> Open Door To A worlds Of Fashion<a href="#">Discover
-                                        Now</a></h3>
+                                    <h3 class="welcome-text">Convierte tu idea en algo único
+                                        <a href="#">Diseña ahora</a>
+                                    </h3>
                                 </div>
                                 <div class="swiper-slide">
-                                    <h3 class="welcome-text"> Enjoy free shipping on orders 100$ up<a href="#">Discover
-                                        Now</a></h3>
+                                    <h3 class="welcome-text">Personalizados hechos para ti
+                                        <a href="#">Ver opciones</a>
+                                    </h3>
                                 </div>
                                 <div class="swiper-slide">
-                                    <h3 class="welcome-text"> Open Door To A worlds Of Fashion<a href="#">Discover
-                                        Now</a></h3>
+                                    <h3 class="welcome-text">Regalos que sí se recuerdan
+                                        <a href="#">Descubrir</a>
+                                    </h3>
                                 </div>
                                 <div class="swiper-slide">
-                                    <h3 class="welcome-text"> Enjoy free shipping on orders 100$ up<a href="#">Discover
-                                        Now</a></h3>
+                                    <h3 class="welcome-text">Tú imaginas, nosotros lo creamos<a href="#">
+                                        Cuéntanos tu idea</a></h3>
                                 </div>
                             </div>
                             <div class="slider-navigation2">
@@ -61,120 +64,61 @@
                                 </a>
                             </div>
 
-
                             <a href="{% url 'home' %}" class="logo"><img src="/static/images/logo1.svg"
                                                                          alt="weiboo-logo"></a>
-
-
                         </div>
                         <div class="rts-menu">
                             <nav class="menus menu-toggle">
                                 <ul class="nav__menu">
-                                    <li class="has-dropdown"><a class="menu-item active1" href="#">Home <i
+
+                                    <li class="has-dropdown"><a class="menu-item active1"
+                                                                href="{% url 'home' %}">Inicio </a></li>
+
+                                    <li class="has-dropdown"><a class="menu-item" href="#">Productos <i
                                             class="rt-plus"></i></a>
                                         <ul class="dropdown-ul">
-                                            <li class="dropdown-li"><a class="dropdown-link active" href="#">Main
-                                                Home</a>
-                                            </li>
-                                            <li class="dropdown-li"><a class="dropdown-link" href="#">Fashion
-                                                Home</a>
-                                            </li>
-                                            <li class="dropdown-li"><a class="dropdown-link" href="#">Fashion
-                                                Home Two</a>
-                                            </li>
-                                            <li class="dropdown-li"><a class="dropdown-link" href="#">Furniture
-                                                Home</a>
-                                            </li>
-                                            <li class="dropdown-li"><a class="dropdown-link" href="#">Decor
-                                                Home</a>
-                                            </li>
-                                            <li class="dropdown-li"><a class="dropdown-link" href="#">Electronics
-                                                Home</a>
-                                            </li>
-                                            <li class="dropdown-li"><a class="dropdown-link" href="#">Grocery
-                                                Home</a>
-                                            </li>
-                                            <li class="dropdown-li"><a class="dropdown-link" href="#">Footwear
-                                                Home</a>
-                                            </li>
-                                            <li class="dropdown-li"><a class="dropdown-link" href="#">Gaming
-                                                Home</a>
-                                            </li>
-                                            <li class="dropdown-li"><a class="dropdown-link" href="#">Sunglass
-                                                Home</a>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                    <li class="has-dropdown"><a class="menu-item" href="#">Shop <i class="rt-plus"></i></a>
-                                        <ul class="dropdown-ul mega-dropdown">
-                                            <li class="mega-dropdown-li">
-                                                <ul class="mega-dropdown-ul">
-                                                    <li class="dropdown-li"><a class="dropdown-link2" href="#">Shop</a>
-                                                    </li>
-                                                    <li class="dropdown-li"><a class="dropdown-link2" href="#">Left
-                                                        Sidebar Shop</a>
-                                                    </li>
-                                                    <li class="dropdown-li"><a class="dropdown-link2" href="#">Right
-                                                        Sidebar Shop</a>
-                                                    </li>
-                                                    <li class="dropdown-li"><a class="dropdown-link2" href="#">Full
-                                                        Width Shop</a>
-                                                    </li>
-                                                </ul>
-                                            </li>
-                                            <li class="mega-dropdown-li">
-                                                <ul class="mega-dropdown-ul">
-                                                    <li class="dropdown-li"><a class="dropdown-link2" href="#">Single
-                                                        Product Layout One</a>
-                                                    </li>
-                                                    <li class="dropdown-li"><a class="dropdown-link2" href="#">Single
-                                                        Product Layout Two</a>
-                                                    </li>
-                                                    <li class="dropdown-li"><a class="dropdown-link2" href="#">Variable
-                                                        Product</a>
-                                                    </li>
-                                                    <li class="dropdown-li"><a class="dropdown-link2" href="#">Grouped
-                                                        Product</a>
-                                                    </li>
-                                                </ul>
-                                            </li>
-                                            <li class="mega-dropdown-li last-child">
-                                                <ul class="mega-dropdown-ul">
-                                                    <li class="dropdown-li"><a class="dropdown-link2" href="#">Cart</a>
-                                                    </li>
-
-                                                    <li class="dropdown-li"><a class="dropdown-link2"
-                                                                               href="#">Checkout</a>
-                                                    </li>
-                                                    <li class="dropdown-li"><a class="dropdown-link2" href="#">My
-                                                        Account</a>
-                                                    </li>
-                                                </ul>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                    <li class="has-dropdown"><a class="menu-item" href="#">Pages <i class="rt-plus"></i></a>
-                                        <ul class="dropdown-ul">
-                                            <li class="dropdown-li"><a class="dropdown-link" href="#">About</a>
-                                            </li>
-                                            <li class="dropdown-li"><a class="dropdown-link" href="#">FAQ's</a>
-                                            </li>
-                                            <li class="dropdown-li"><a class="dropdown-link" href="#">Error
-                                                404</a>
+                                            {% for categoria in categorias %}
+                                                <li class="dropdown-li">
+                                                    <a class="dropdown-link"
+                                                       href="{% url 'productos:productos_por_categoria' categoria.id_categoria %}">
+                                                        {{ categoria.nombre }}
+                                                    </a>
+                                                </li>
+                                            {% empty %}
+                                                <li class="dropdown-li">
+                                                    <span class="dropdown-link">No hay categorías disponibles</span>
+                                                </li>
+                                            {% endfor %}
+                                            <li class="dropdown-li"><a class="dropdown-link"
+                                                                       href="{% url 'productos:producto_list' %}">Todos
+                                                los productos</a>
                                             </li>
                                         </ul>
                                     </li>
 
-                                    <li class="has-dropdown"><a class="menu-item" href="#">Blog <i class="rt-plus"></i></a>
+                                    <li class="has-dropdown"><a class="menu-item" href="#">Diseña tu idea <i
+                                            class="rt-plus"></i></a>
                                         <ul class="dropdown-ul">
-                                            <li class="dropdown-li"><a class="dropdown-link" href="#">Blog</a>
+                                            <li class="dropdown-li"><a class="dropdown-link" href="">Cuéntanos tu
+                                                idea</a>
                                             </li>
-                                            <li class="dropdown-li"><a class="dropdown-link" href="#">Blog Grid</a></li>
-                                            <li class="dropdown-li"><a class="dropdown-link" href="#">Blog Details</a>
+                                            <li class="dropdown-li"><a class="dropdown-link" href="">Personalizados</a>
+                                            </li>
+                                            <li class="dropdown-li"><a class="dropdown-link" href="">Casos
+                                                realizados</a>
                                             </li>
                                         </ul>
                                     </li>
-                                    <li><a class="menu-item" href="#">Contact</a></li>
+
+                                    <li class="has-dropdown"><a class="menu-item" href="#">Ayuda <i class="rt-plus"></i></a>
+                                        <ul class="dropdown-ul">
+                                            <li class="dropdown-li"><a class="dropdown-link" href="{% url 'faq' %}">Preguntas
+                                                frecuentes</a></li>
+                                            <li class="dropdown-li"><a class="dropdown-link" href="{% url 'about' %}">Acerca
+                                                de</a></li>
+                                        </ul>
+                                    </li>
+                                    <li><a class="menu-item" href="{% url 'contact' %}">Contacto</a></li>
                                 </ul>
                             </nav>
                         </div>
@@ -208,12 +152,25 @@
                                     </div>
                                 </div>
                             </div>
-                            <a href="{% url 'login' %}" class="account"><i class="rt-user-2"></i></a>
+
+
+                            <a href="{% url 'account' %}" class="account">
+                                {% if user.is_authenticated %}
+                                    <span class="user-initial"> {{ user.first_name|slice:":1"|upper }}{{ user.last_name|slice:":1"|upper }}</span>
+                                {% else %}
+                                    <i class="rt-user-2"></i>
+                                {% endif %}
+                            </a>
+
+
                             <div class="cart action-item">
                                 <div class="cart-nav">
-                                    <div class="cart-icon icon"><a href="#0"><i aria-hidden="true"
-                                                                                class="fas fa-shopping-basket"></i></a><span
-                                            class="wishlist-dot icon-dot">3</span></div>
+                                    <div class="cart-icon icon">
+                                        <a href="#0">
+                                            <i aria-hidden="true" class="fas fa-shopping-basket"></i>
+                                        </a>
+                                        <span id="header-cart-badge" class="wishlist-dot icon-dot">0</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -221,105 +178,27 @@
                 </div>
             </div>
         </div>
+
+        <!-- Header cart -->
         <div class="cart-bar">
             <div class="cart-header">
-                <h3 class="cart-heading">MY CART (3 ITEMS)</h3>
+                <h3 class="cart-heading">MI CARRITO (<span id="cart-count">0</span> ITEMS)</h3>
                 <div class="close-cart"><i class="fal fa-times"></i></div>
             </div>
-            <div class="product-area">
-                <div class="product-item">
-                    <div class="product-detail">
-                        <div class="product-thumb"><img src="/static/images/slider/image1.jpg" alt="product-thumb">
-                        </div>
-                        <div class="item-wrapper">
-                            <span class="product-name">Parachute Jacket</span>
-                            <div class="item-wrapper">
-                            <span class="product-variation"><span class="color">Green /</span>
-                                <span class="size">XL</span></span>
-                            </div>
-                            <div class="item-wrapper">
-                                <span class="product-qnty">3 ×</span>
-                                <span class="product-price">$198.00</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="cart-edit">
-                        <div class="quantity-edit">
-                            <button class="button"><i class="fal fa-minus minus"></i></button>
-                            <input type="text" class="input" value="3"/>
-                            <button class="button plus">+<i class="fal fa-plus plus"></i></button>
-                        </div>
-                        <div class="item-wrapper d-flex mr--5 align-items-center">
-                            <a href="#" class="product-edit"><i class="fal fa-edit"></i></a>
-                            <a href="#" class="delete-cart"><i class="fal fa-times"></i></a>
-                        </div>
-                    </div>
-                </div>
-                <div class="product-item">
-                    <div class="product-detail">
-                        <div class="product-thumb"><img src="/static/images/slider/image2.jpg" alt="product-thumb">
-                        </div>
-                        <div class="item-wrapper">
-                            <span class="product-name">Narrow Trouser</span>
-                            <div class="item-wrapper">
-                            <span class="product-variation"><span class="color">Green /</span>
-                                <span class="size">XL</span></span>
-                            </div>
-                            <div class="item-wrapper">
-                                <span class="product-qnty">2 ×</span>
-                                <span class="product-price">$88.00</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="cart-edit">
-                        <div class="quantity-edit">
-                            <button class="button"><i class="fal fa-minus minus"></i></button>
-                            <input type="text" class="input" value="2"/>
-                            <button class="button plus">+<i class="fal fa-plus plus"></i></button>
-                        </div>
-                        <div class="item-wrapper d-flex mr--5 align-items-center">
-                            <a href="#" class="product-edit"><i class="fal fa-edit"></i></a>
-                            <a href="#" class="delete-cart"><i class="fal fa-times"></i></a>
-                        </div>
-                    </div>
-                </div>
-                <div class="product-item last-child">
-                    <div class="product-detail">
-                        <div class="product-thumb"><img src="/static/images/slider/image5.jpg" alt="product-thumb">
-                        </div>
-                        <div class="item-wrapper">
-                            <span class="product-name">Bellyless Hoodie</span>
-                            <div class="item-wrapper">
-                            <span class="product-variation"><span class="color">Green /</span>
-                                <span class="size">XL</span></span>
-                            </div>
-                            <div class="item-wrapper">
-                                <span class="product-qnty">1 ×</span>
-                                <span class="product-price">$289.00</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="cart-edit">
-                        <div class="quantity-edit">
-                            <button class="button"><i class="fal fa-minus minus"></i></button>
-                            <input type="text" class="input" value="2"/>
-                            <button class="button plus">+<i class="fal fa-plus plus"></i></button>
-                        </div>
-                        <div class="item-wrapper d-flex mr--5 align-items-center">
-                            <a href="#" class="product-edit"><i class="fal fa-edit"></i></a>
-                            <a href="#" class="delete-cart"><i class="fal fa-times"></i></a>
-                        </div>
-                    </div>
-                </div>
+
+            <div class="product-area" id="header-product-area">
+                <!-- JS rellenará con items -->
+                <div class="empty-cart-message">Cargando...</div>
             </div>
+
             <div class="cart-bottom-area">
-            <span class="spend-shipping"><i class="fal fa-truck"></i> SPENT <span class="amount">$199.00</span> MORE
-                FOR FREE SHIPPING</span>
-                <span class="total-price">TOTAL: <span class="price">$556</span></span>
-                <a href="#" class="checkout-btn cart-btn">PROCEED TO CHECKOUT</a>
-                <a href="#" class="view-btn cart-btn">VIEW CART</a>
+                <span class="spend-shipping"><i class="fal fa-truck"></i> HACEMOS ENVÍOS <span
+                        class="amount">LOCALES</span></span>
+                <span class="total-price">TOTAL: <span class="price" id="header-total">$0.00</span></span>
+                <a href="{% url 'productos:cart' %}" class="view-btn cart-btn">VER CARRITO</a>
             </div>
         </div>
+
         <!-- slide-bar start -->
         <aside class="slide-bar">
             <div class="offset-sidebar">
@@ -340,7 +219,8 @@
                         <ul>
                             <li class="info phone"><a href="tel:78090790890208806803">780 907 908 90, 208 806 803</a>
                             </li>
-                            <li class="info email"><a href="email:info@webmail.com">info@webmail.com</a></li>
+                            <li class="info email"><a href="email:pixcelsthemes@gmail.com">pixcelsthemes@gmail.com</a>
+                            </li>
                             <li class="info web"><a href="www.webexample.com">www.webexample.com</a></li>
                             <li class="info location">13/A, New Pro State, NYC</li>
                         </ul>
@@ -361,91 +241,55 @@
             <!-- side-mobile-menu start -->
             <nav class="side-mobile-menu side-mobile-menu1">
                 <ul id="mobile-menu-active">
+
+                    <li><a class="mm-link" href="{% url 'home' %}">Inicio</a></li>
+
                     <li class="has-dropdown firstlvl">
-                        <a class="mm-link" href="#">Home <i class="rt-angle-down"></i></a>
-                        <ul class="sub-menu">
+                        <a class="mm-link" href="">Productos <i class="rt-angle-down"></i></a>
 
-
-                            <li><a href="#">Main Home</a></li>
-                            <li><a href="#">Fashion Home</a></li>
-                            <li><a href="#">Fashion Home Two</a></li>
-                            <li><a href="#">Furniture Home</a></li>
-                            <li><a href="#">Decor Home</a></li>
-                            <li><a href="#">Electronics Home</a></li>
-                            <li><a href="#">Grocery Home</a></li>
-                            <li><a href="#">Footwear Home</a></li>
-                            <li><a href="#">Gaming Home</a></li>
-                            <li><a href="#">Sunglass Home</a></li>
-
-
-                        </ul>
-                    </li>
-                    <li class="has-dropdown firstlvl">
-                        <a class="mm-link" href="#">Shop <i class="rt-angle-down"></i></a>
                         <ul class="sub-menu mega-dropdown-mobile">
                             <li class="mega-dropdown-li">
                                 <ul class="mega-dropdown-ul mm-show">
-                                    <li class="dropdown-li"><a class="dropdown-link" href="#">Shop</a>
-                                    </li>
-                                    <li class="dropdown-li"><a class="dropdown-link" href="#">Left Sidebar
-                                        Shop</a>
-                                    </li>
-                                    <li class="dropdown-li"><a class="dropdown-link" href="#">Right Sidebar
-                                        Shop</a>
-                                    </li>
-                                    <li class="dropdown-li"><a class="dropdown-link" href="#">Full
-                                        Width Shop</a>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li class="mega-dropdown-li">
-                                <ul class="mega-dropdown-ul mm-show">
-                                    <li class="dropdown-li"><a class="dropdown-link" href="#">Single Product
-                                        Layout
-                                        One</a>
-                                    </li>
-                                    <li class="dropdown-li"><a class="dropdown-link" href="#">Single Product Layout
-                                        Two</a>
-                                    </li>
-                                    <li class="dropdown-li"><a class="dropdown-link" href="#">Variable Product</a>
-                                    </li>
-                                    <li class="dropdown-li"><a class="dropdown-link" href="#">Grouped Product</a>
+
+                                    {% for categoria in categorias %}
+                                        <li class="dropdown-li"><a class="dropdown-link"
+                                                                   href="{% url 'productos:productos_por_categoria' categoria.id_categoria %}">{{ categoria.nombre }}</a>
+                                        </li>
+                                    {% empty %}
+                                        <li class="dropdown-li"><span
+                                                class="dropdown-link">No hay categorías disponibles</span>
+                                        </li>
+                                    {% endfor %}
+                                    <li class="dropdown-li"><a class="dropdown-link"
+                                                               href="{% url 'productos:producto_list' %}">Todos
+                                        los productos</a>
                                     </li>
                                 </ul>
                             </li>
-                            <li class="mega-dropdown-li">
-                                <ul class="mega-dropdown-ul mm-show">
-                                    <li class="dropdown-li"><a class="dropdown-link" href="#">Cart
-                                    </a>
-                                    </li>
-                                    <li class="dropdown-li"><a class="dropdown-link" href="#">Checkout</a>
-                                    </li>
-                                    <li class="dropdown-li"><a class="dropdown-link" href="#">My
-                                        Account</a>
-                                    </li>
-                                </ul>
-                            </li>
+                        </ul>
+
+                    </li>
+                    <li class="has-dropdown firstlvl">
+                        <a class="mm-link" href="">Diseña tu idea <i class="rt-angle-down"></i></a>
+                        <ul class="sub-menu">
+                            <li><a href="">Cuéntanos tu idea</a></li>
+                            <li><a href="">Personalizados</a></li>
+                            <li><a href="">Casos realizados</a></li>
                         </ul>
                     </li>
                     <li class="has-dropdown firstlvl">
-                        <a class="mm-link" href="#">Pages <i class="rt-angle-down"></i></a>
+                        <a class="mm-link" href="">Ayuda <i class="rt-angle-down"></i></a>
                         <ul class="sub-menu">
-                            <li><a href="#">About</a></li>
-                            <li><a href="#">FAQ's</a></li>
-                            <li><a href="#">Error 404</a></li>
+                            <li><a href="{% url 'faq' %}">Preguntas frecuentes</a></li>
+                            <li><a href="{% url 'about' %}">Acerca de</a></li>
+
                         </ul>
                     </li>
-                    <li class="has-dropdown firstlvl">
-                        <a class="mm-link" href="#">Blog <i class="rt-angle-down"></i></a>
-                        <ul class="sub-menu">
-                            <li><a href="#">Blog</a></li>
-                            <li><a href="#">Blog Grid</a></li>
-                            <li><a href="#">Blog Details</a></li>
-                        </ul>
-                    </li>
-                    <li><a class="mm-link" href="#">Contact</a></li>
+                    <li><a class="mm-link" href="{% url 'contact' %}">Contacto</a></li>
                 </ul>
             </nav>
+
+
             <div class="header-action-items header-action-items1 header-action-items-side">
                 <div class="search-part">
                     <div class="search-icon action-item icon"><i class="rt-search"></i></div>
@@ -453,7 +297,7 @@
                         <div class="container">
                             <div class="search-input-inner">
                                 <select id="custom-select">
-                                    <option value="hide">Categorías</option>
+                                    <option value="hide">All Catagory</option>
                                     <option value="all">All</option>
                                     <option value="men">Men</option>
                                     <option value="women">Women</option>
@@ -471,20 +315,23 @@
                         </div>
                     </div>
                 </div>
+
+
                 <div class="cart action-item">
                     <div class="cart-nav">
-                        <div class="cart-icon icon"><i class="rt-cart"></i><span class="wishlist-dot icon-dot">3</span>
+                        <div class="cart-icon icon"><i class="rt-cart"></i><span id="header-cart-badge-movil"
+                                                                                 class="wishlist-dot icon-dot">0</span>
                         </div>
                     </div>
                 </div>
-                <div class="wishlist action-item">
-                    <div class="favourite-icon icon"><i class="rt-heart"></i><span class="cart-dot icon-dot">0</span>
-                    </div>
-                </div>
-                <a href="#" class="account"><i class="rt-user-2"></i></a>
+
+                <a href="{% url 'account' %}" class="account"><i class="rt-user-2"></i></a>
             </div>
+
             <!-- side-mobile-menu end -->
         </aside>
+
+
         <!--================= Banner Section Start Here =================-->
         <div class="banner banner-1 bg-image">
             <div class="container">
@@ -493,26 +340,51 @@
                         <div class="col-xl-2 col-md-4 col-sm-12 gutter-1">
                             <div class="catagory-sidebar">
                                 <div class="widget-bg">
-                                    <h2 class="widget-title">Categorías <i class="rt-angle-down"></i></h2>
+                                    <h2 class="widget-title">
+                                        Categorías <i class="rt-angle-down"></i>
+                                    </h2>
                                     <nav>
                                         <ul>
-                                            <li><a href="#">Activewear <i class="rt rt-arrow-right-long"></i></a></li>
-                                            <li><a href="#">Bikinis <i class="rt rt-arrow-right-long"></i></a></li>
-                                            <li><a href="#">Dresses <i class="rt rt-arrow-right-long"></i></a></li>
-                                            <li><a href="#">Jumpsuits <i class="rt rt-arrow-right-long"></i></a></li>
-                                            <li><a href="#">Smart Dress <i class="rt rt-arrow-right-long"></i></a></li>
-                                            <li><a href="#">Sneakers <i class="rt rt-arrow-right-long"></i></a></li>
-                                            <li><a href="#">Sweetshirts <i class="rt rt-arrow-right-long"></i></a></li>
-                                            <li><a href="#">Trousers <i class="rt rt-arrow-right-long"></i></a></li>
-                                            <li><a href="#">Furniture <i class="rt rt-arrow-right-long"></i></a></li>
+                                            {% for categoria in categorias %}
+                                                <li>
+                                                    <a href="{% url 'productos:productos_por_categoria' categoria.id_categoria %}">
+                                                        {{ categoria.nombre }}
+                                                        <i class="rt rt-arrow-right-long"></i>
+                                                    </a>
+                                                </li>
+                                            {% empty %}
+                                                <li>No hay categorías disponibles</li>
+                                            {% endfor %}
                                         </ul>
                                     </nav>
                                 </div>
+
                             </div>
                         </div>
                         <div class="col-xl-10 col-md-8 col-sm-12 gutter-2">
                             <div class="swiper bannerSlide2">
                                 <div class="swiper-wrapper">
+
+                                    <div class="swiper-slide">
+                                        <div class="banner-single bg-image bg-image-3-SV">
+                                            <div class="container">
+                                                <div class="single-inner">
+                                                    <div class="content-box">
+                                                        <p class="slider-subtitle"><img
+                                                                src="/static/images/banner/wvbo-icon.png" alt="">
+                                                            Regalos personalizados para enamorar </p>
+                                                        <h2 class="slider-title"> SAN VALENTÍN </h2>
+                                                        <div class="slider-description">
+                                                            <p>Detalles únicos en playeras, madera y más, hechos con
+                                                                amor</p>
+                                                        </div>
+                                                        <a href="#" class="slider-btn2">Conocer más</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     <div class="swiper-slide">
                                         <div class="banner-single bg-image bg-image-3-1">
                                             <div class="container">
@@ -525,12 +397,14 @@
                                                         <div class="slider-description">
                                                             <p>Prototipos y piezas personalizadas con alta precisión</p>
                                                         </div>
-                                                        <a href="#" class="slider-btn2">View Collections</a>
+                                                        <a href="#" class="slider-btn2">Conocer más</a>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
+
+
                                     <div class="swiper-slide">
                                         <div class="banner-single bg-image bg-image-3-3">
                                             <div class="container">
@@ -543,12 +417,13 @@
                                                         <div class="slider-description">
                                                             <p>Personalización profesional en madera, acrílico y más</p>
                                                         </div>
-                                                        <a href="#" class="slider-btn2">View Collections</a>
+                                                        <a href="#" class="slider-btn2">Conocer más</a>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
+
                                     <div class="swiper-slide">
                                         <div class="banner-single bg-image bg-image-3-4">
                                             <div class="container">
@@ -561,12 +436,14 @@
                                                         <div class="slider-description">
                                                             <p>Diseños únicos con impresión duradera y de calidad</p>
                                                         </div>
-                                                        <a href="#" class="slider-btn2">View Collections</a>
+                                                        <a href="#" class="slider-btn2">Conocer más</a>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
+
+
                                 </div>
                                 <div class="slider-navigation">
                                     <div class="swiper-button-prev slider-btn prev"><i
@@ -588,7 +465,7 @@
     <div class="rts-offer-section">
         <div class="container">
             <div class="rts-offer-inner">
-                <p class="description">Super discount for your 100$ purchase. Use this code <a href="#">OFFER100</a>
+                <p class="description">Súper descuento del 10% en tu primera compra. Usando este código: <a href="#">NUEVO10</a>
                 </p>
             </div>
         </div>
@@ -602,53 +479,37 @@
             </div>
             <div class="swiper rts-cmmnSlider-over" data-swiper="pagination">
                 <div class="swiper-wrapper">
-                    <div class="swiper-slide">
-                        <div class="collection-item">
-                            <a href="#"><img src="/static/images/catagory/item-1.png" alt="collection-image">
-                            </a>
-                            <p class="item-quantity">20 <span>items</span></p>
-                            <a href="#" class="item-catagory-box">
-                                <h3 class="title">FOR WOMEN'S</h3>
-                            </a>
+                    {% for categoria in categorias %}
+                        <div class="swiper-slide">
+                            <div class="collection-item">
+
+                                <a href="{% url 'productos:productos_por_categoria' categoria.id_categoria %}">
+                                    {% if categoria.imagen %}
+                                        <img src="{{ categoria.imagen.url }}" alt="{{ categoria.nombre }}">
+                                    {% else %}
+                                        <img src="/static/images/catagory/defaultCategorias.png"
+                                             alt="{{ categoria.nombre }}">
+                                    {% endif %}
+                                </a>
+                                <p class="item-quantity">
+                                    {{ categoria.productos.count }} <span>items</span>
+                                </p>
+
+                                <a href="{% url 'productos:productos_por_categoria' categoria.id_categoria %}"
+                                   class="item-catagory-box">
+                                    <h3 class="title">{{ categoria.nombre|upper }}</h3>
+                                </a>
+
+                            </div>
                         </div>
-                    </div>
-                    <div class="swiper-slide">
-                        <div class="collection-item">
-                            <a href="#"><img src="/static/images/catagory/item-2.png" alt="collection-image">
-                            </a>
-                            <p class="item-quantity">33 <span>items</span></p>
-                            <a href="#" class="item-catagory-box">
-                                <h3 class="title">FOR MAN'S</h3>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="swiper-slide">
-                        <div class="collection-item">
-                            <a href="#"><img src="/static/images/catagory/item-3.png" alt="collection-image">
-                            </a>
-                            <p class="item-quantity">25 <span>items</span></p>
-                            <a href="#" class="item-catagory-box">
-                                <h3 class="title">FOR KIDS</h3>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="swiper-slide">
-                        <div class="collection-item">
-                            <a href="#"><img src="/static/images/catagory/item-4.png" alt="collection-image">
-                            </a>
-                            <p class="item-quantity">33 <span>items</span></p>
-                            <a href="#" class="item-catagory-box">
-                                <h3 class="title">ACCESORIES</h3>
-                            </a>
-                        </div>
-                    </div>
+                    {% endfor %}
                 </div>
+
+
             </div>
         </div>
     </div>
-    <!-- ..::New Collection Section End Here::.. -->
 
-    <!-- ..::Hand Picked Section Start Here::.. -->
     <div class="rts-hand-picked-products-section">
         <div class="container">
             <div class="section-header section-header3 text-center">
@@ -1383,5 +1244,219 @@
         </div>
     </div>
     <!-- ..::Product-details Section End Here::.. -->
+    <script>
+        (function () {
+            const csrftoken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
+            function fetchJSON(url, options) {
+                return fetch(url, options).then(r => {
+                    if (!r.ok) throw new Error('HTTP ' + r.status);
+                    return r.json();
+                });
+            }
+
+            // --- Renderiza items en header a partir del JSON que devuelve cart-data ---
+            function renderHeader(items, total) {
+                const container = document.getElementById('header-product-area');
+                const countEl = document.getElementById('cart-count');
+                const totalEl = document.getElementById('header-total');
+                const badgeEl = document.getElementById('header-cart-badge'); // 👈 NUEVO
+                const badgeElMovil = document.getElementById('header-cart-badge-movil');
+                if (!container) return;
+
+
+                if (!items || items.length === 0) {
+                    container.innerHTML = '<div class="empty-cart">Tu carrito está vacío</div>';
+                    countEl.innerText = '0';
+                    totalEl.innerText = '$0.00';
+                    if (badgeEl) badgeEl.innerText = '0'; // 👈
+                    if (badgeElMovil) badgeElMovil.innerText = '0'; // 👈
+                    return;
+                }
+
+                countEl.innerText = items.reduce((s, i) => s + i.cantidad, 0);
+                const totalItems = items.reduce((s, i) => s + i.cantidad, 0);// 👈
+                totalEl.innerText = '$ ' + parseFloat(total).toFixed(2);
+                if (badgeEl) badgeEl.innerText = totalItems; // 👈
+                if (badgeEl) badgeElMovil.innerText = totalItems; // 👈
+
+                // construir HTML de cada item
+                container.innerHTML = items.map(item => {
+                    return `
+            <div class="product-item" data-item="${item.id}">
+                <div class="product-detail">
+                    <div class="product-thumb"><img src="${item.imagen}" alt="product-thumb" ></div>
+                    <div class="item-wrapper">
+                        <span class="product-name">${escapeHtml(item.nombre)}</span>
+
+                            <div class="item-wrapper"> 
+                                ${item.variante ? `
+                                <small class="product-variant text-muted">${escapeHtml(item.variante)}</small>` : ''}
+                            </div>
+
+
+                        <div class="item-wrapper">
+                            <div class="item-wrapper">
+                                <span class="product-qnty">${item.cantidad} ×</span>
+                                <span class="product-price">$ ${parseFloat(item.precio_unitario).toFixed(2)}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="cart-edit">
+                    <div class="quantity-edit">
+                        <button class="button header-minus" data-item="${item.id}"><i class="fal fa-minus"></i></button>
+                        <input type="text" class="input header-qty" value="${item.cantidad}" readonly />
+                        <button class="button header-plus" data-item="${item.id}"><i class="fal fa-plus"></i></button>
+                    </div>
+                    <div class="item-wrapper d-flex mr--5 align-items-center">
+                        <a href="#" class="delete-cart" data-item="${item.id}"><i class="fal fa-times"></i></a>
+                    </div>
+                </div>
+            </div>
+            `;
+                }).join('');
+            }
+
+            // sanitize simple text
+            function escapeHtml(text) {
+                return String(text)
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#039;');
+            }
+
+            // --- obtiene el estado actual del carrito (llama a tu view cart_data) ---
+            function refreshHeaderCart() {
+                fetchJSON("{% url 'productos:cart_data' %}")
+                    .then(data => {
+                        renderHeader(data.items, data.total);
+                    })
+                    .catch(err => {
+                        console.error('Error cargando cart_data', err);
+                    });
+            }
+
+            // --- acciones: actualizar cantidad / eliminar: usan los endpoints ya existentes ---
+            function postActualizar(itemId, cantidad) {
+                const fd = new FormData();
+                fd.append('item_id', itemId);
+                fd.append('cantidad', cantidad);
+
+                return fetch("{% url 'productos:actualizar_item_carrito' %}", {
+                    method: 'POST',
+                    headers: {'X-CSRFToken': csrftoken},
+                    body: fd
+                }).then(r => r.json());
+            }
+
+            function postEliminar(itemId) {
+                const fd = new FormData();
+                fd.append('item_id', itemId);
+
+                return fetch("{% url 'productos:eliminar_item_carrito' %}", {
+                    method: 'POST',
+                    headers: {'X-CSRFToken': csrftoken},
+                    body: fd
+                }).then(r => r.json());
+            }
+
+            // --- actualiza la fila del template cart si existe en la página (sin recargar) ---
+            function updateCartPageRow(itemData) {
+                // itemData: {id, cantidad, subtotal, total} asumido según respuesta del backend
+                const row = document.querySelector(`tr[data-item="${itemData.id}"]`);
+                if (!row) return;
+
+                const input = row.querySelector('input');
+                if (input) input.value = itemData.cantidad;
+
+                const subtotalEl = document.getElementById(`subtotal-${itemData.id}`);
+                if (subtotalEl) subtotalEl.innerText = '$ ' + parseFloat(itemData.subtotal).toFixed(2);
+
+                const totalEl = document.getElementById('total');
+                if (totalEl) totalEl.innerText = '$ ' + parseFloat(itemData.total).toFixed(2);
+            }
+
+            // --- delegado de eventos en header para plus/minus/delete ---
+            document.addEventListener('click', function (e) {
+                const plusBtn = e.target.closest('.header-plus');
+                if (plusBtn) {
+                    e.preventDefault();
+                    const itemId = plusBtn.dataset.item;
+                    // obtener cantidad actual (del input) +1 o pedir al servidor actualice
+                    const input = document.querySelector(`.product-item[data-item="${itemId}"] .header-qty`);
+                    let cantidad = parseInt(input ? input.value : '1') + 1;
+                    plusBtn.disabled = true;
+                    postActualizar(itemId, cantidad)
+                        .then(data => {
+                            // data.cantidad, data.subtotal, data.total esperados
+                            refreshHeaderCart(); // re-popula header desde server (estado fuente)
+                            if (data && !data.error) updateCartPageRow({
+                                id: itemId,
+                                cantidad: data.cantidad,
+                                subtotal: data.subtotal,
+                                total: data.total
+                            });
+                        })
+                        .finally(() => plusBtn.disabled = false);
+                    return;
+                }
+
+                const minusBtn = e.target.closest('.header-minus');
+                if (minusBtn) {
+                    e.preventDefault();
+                    const itemId = minusBtn.dataset.item;
+                    const input = document.querySelector(`.product-item[data-item="${itemId}"] .header-qty`);
+                    let cantidad = Math.max(1, (parseInt(input ? input.value : '1') - 1));
+                    minusBtn.disabled = true;
+                    postActualizar(itemId, cantidad)
+                        .then(data => {
+                            refreshHeaderCart();
+                            if (data && !data.error) updateCartPageRow({
+                                id: itemId,
+                                cantidad: data.cantidad,
+                                subtotal: data.subtotal,
+                                total: data.total
+                            });
+                        })
+                        .finally(() => minusBtn.disabled = false);
+                    return;
+                }
+
+                const del = e.target.closest('.delete-cart');
+                if (del) {
+                    e.preventDefault();
+                    const itemId = del.dataset.item;
+
+                    del.disabled = true;
+                    postEliminar(itemId)
+                        .then(data => {
+                            refreshHeaderCart();
+                            if (data && !data.error) {
+                                const row = document.querySelector(`tr[data-item="${itemId}"]`);
+                                if (row) row.remove();
+
+                                const totalEl = document.getElementById('total');
+                                if (totalEl && data.total !== undefined) {
+                                    totalEl.innerText = '$ ' + parseFloat(data.total).toFixed(2);
+                                }
+                            }
+                        })
+                        .finally(() => del.disabled = false);
+                    return;
+                }
+            });
+
+            // inicializar
+            document.addEventListener('DOMContentLoaded', function () {
+                refreshHeaderCart();
+                // opcional: refrescar cada X minutos: setInterval(refreshHeaderCart, 1000 * 60 * 2);
+            });
+
+            // Exponer para que otras partes del sitio puedan refrescar el header
+            window.refreshHeaderCart = refreshHeaderCart;
+        })();
+    </script>
 {% endblock content %}

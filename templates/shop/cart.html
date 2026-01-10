@@ -1,0 +1,254 @@
+{% extends "layout/layout.html" %}
+{% load l10n %}
+{% block script %}
+    <script src="/static/js/vendors/zoom.js"></script>
+{% endblock %}
+
+{% block content %}
+
+    <style>
+        .ajuste-product-img {
+            width: 120px;
+            height: 136px;
+            object-fit: cover; /* NO se deforma */
+        }
+    </style>
+
+    <!-- ..::Cart Section Start Here::.. -->
+    <div class="rts-cart-section">
+        <div class="container">
+            <h4 class="section-title">Lista de Productos</h4>
+            <div class="row justify-content-between">
+                <div class="col-xl-7">
+                    <div class="cart-table-area">
+                        <table class="table table-bordered table-hover">
+                            <thead class="thead-dark">
+                            </thead>
+                            <tbody>
+                            {% for row in items %}
+                                <tr data-item="{{ row.item.id_item }}">
+
+                                    <!-- Imagen -->
+                                    <td>
+                                        <div class="product-thumb">
+                                            {% with img=row.item.producto.imagen_principal %}
+                                                {% if img %}
+                                                    <img src="{{ img.imagen.url }}"
+                                                         alt="{{ row.item.producto.nombre }}"
+                                                         class="ajuste-product-img">
+
+                                                {% else %}
+                                                    <img src="/static/img/no-image.png"
+                                                         alt="Sin imagen"
+                                                         class="ajuste-product-img">
+                                                {% endif %}
+                                            {% endwith %}
+                                        </div>
+                                    </td>
+
+                                    <!-- Nombre / variante -->
+                                    <td>
+                                        <div class="product-title-area">
+                                            <span class="pretitle">{% if row.item.variante %}
+                                                {% for k, v in row.item.variante.opciones.items %}
+                                                    {{ k }}: {{ v }}
+                                                {% endfor %}
+                                            {% else %}Producto{% endif %}
+                                            </span>
+                                            <h4 class="product-title">
+                                                {{ row.item.producto.nombre }}
+                                            </h4>
+                                        </div>
+                                    </td>
+
+                                    <!-- Precio -->
+                                    <td><span class="product-price">${{ row.precio_unitario|unlocalize }}</span>
+                                    </td>
+
+                                    <!-- Cantidad -->
+                                    <td>
+                                        <div class="cart-edit">
+                                            <div class="quantity-edit">
+
+                                                <button class="button"
+                                                        onclick="cambiarCantidad('{{ row.item.id_item }}', -1)">
+                                                    <i class="fal fa-minus"></i>
+                                                </button>
+
+                                                <input type="text"
+                                                       class="input"
+                                                       value="{{ row.item.cantidad }}"
+                                                       readonly>
+
+                                                <button class="button"
+                                                        onclick="cambiarCantidad('{{ row.item.id_item }}', 1)">
+                                                    <i class="fal fa-plus"></i>
+                                                </button>
+
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        <div class="price-box">
+
+                                            <small class="text-muted">
+                                                <strong>Subtotal:</strong>
+                                            </small>
+                                            <small id="subtotal-{{ row.item.id_item }}" class="text-muted">
+                                                ${{ row.subtotal|unlocalize }}
+                                            </small>
+                                        </div>
+                                    </td>
+
+
+                                    <!-- Eliminar -->
+                                    <td class="last-td">
+                                        <button class="remove-btn"
+                                                onclick="eliminarItem('{{ row.item.id_item }}')">
+                                            Eliminar
+                                        </button>
+                                    </td>
+
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="5" style="text-align:center">
+                                        Tu carrito está vacío
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+
+                        </table>
+                        <div class="coupon-apply">
+                            <span class="coupon-text">Código de cupón:</span>
+                            <div class="apply-input">
+                                <input type="text" placeholder="Aplicar cupón aquí">
+                                <button type="submit" class="apply-btn">Aplicar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-4">
+                    <div class="checkout-box">
+                        <div class="checkout-box-inner">
+                            <div class="subtotal-area">
+                                <span class="title">Subtotal</span>
+                                <span class="subtotal-price"> ${{ total|unlocalize }}</span>
+                            </div>
+                            <div class="shipping-check">
+                                <span class="title">Shipping</span>
+                                <div class="check-options">
+                                    <form>
+                                        <div class="form-group">
+                                            <input type="checkbox" id="fltrt">
+                                            <label class="check-title" for="fltrt">Flat rate</label>
+                                        </div>
+                                        <div class="form-group">
+                                            <input type="checkbox" id="frsh">
+                                            <label class="check-title" for="frsh">Free shipping</label>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="shipping-location">
+                                <span class="shipping-to">Shipping to <span>NY.</span></span>
+                                <span class="change-address"><i
+                                        class="fal fa-map-marker-alt mr--5"></i>Change address</span>
+                            </div>
+                            <div class="total-area">
+                                <span class="title">Total</span>
+                                <span class="total-price" id="total">${{ total|unlocalize }}</span>
+                            </div>
+                        </div>
+                        <a href="" class="procced-btn">Pasar al Pago</a>
+                        <a href="" class="continue-shopping"><i class="fal fa-long-arrow-left"></i> Seguir comprando</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ..::Cart Section End Here::.. -->
+    <script>
+        function cambiarCantidad(itemId, delta) {
+            const input = document.querySelector(
+                `tr[data-item="${itemId}"] input`
+            );
+
+            let nuevaCantidad = parseInt(input.value) + delta;
+            if (nuevaCantidad < 1) nuevaCantidad = 1;
+
+            actualizarCantidad(itemId, nuevaCantidad);
+        }
+
+        function setCantidad(itemId, cantidad) {
+            cantidad = parseInt(cantidad);
+            if (cantidad < 1) cantidad = 1;
+
+            actualizarCantidad(itemId, cantidad);
+        }
+
+        function actualizarCantidad(itemId, cantidad) {
+            const data = new FormData();
+            data.append('item_id', itemId);
+            data.append('cantidad', cantidad);
+
+            fetch("{% url 'productos:actualizar_item_carrito' %}", {
+                method: 'POST',
+                headers: {'X-CSRFToken': '{{ csrf_token }}'},
+                body: data
+            })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.error) {
+                        alert(data.error);
+                        return;
+                    }
+
+                    document.querySelector(
+                        `tr[data-item="${itemId}"] input`
+                    ).value = data.cantidad;
+
+                    document.getElementById(
+                        `subtotal-${itemId}`
+                    ).innerText = '$ ' + data.subtotal.toFixed(2);
+
+                    document.getElementById('total').innerText =
+                        '$ ' + data.total.toFixed(2);
+
+                    // sincroniza header
+                    if (window.refreshHeaderCart) window.refreshHeaderCart();
+                });
+        }
+
+        function eliminarItem(itemId) {
+           
+            const data = new FormData();
+            data.append('item_id', itemId);
+
+            fetch("{% url 'productos:eliminar_item_carrito' %}", {
+                method: 'POST',
+                headers: {'X-CSRFToken': '{{ csrf_token }}'},
+                body: data
+            })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.error) {
+                        alert(data.error);
+                        return;
+                    }
+
+                    document.querySelector(
+                        `tr[data-item="${itemId}"]`
+                    ).remove();
+
+                    document.getElementById('total').innerText =
+                        '$ ' + data.total.toFixed(2);
+
+                    // sincroniza header
+                    if (window.refreshHeaderCart) window.refreshHeaderCart();
+                });
+        }
+    </script>
+{% endblock content %}

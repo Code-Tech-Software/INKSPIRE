@@ -1,7 +1,8 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from .models import Usuario
-
+from django import forms
+from django.contrib.auth import get_user_model, authenticate
 
 class UsuarioRegistroForm(UserCreationForm):
     class Meta:
@@ -28,17 +29,6 @@ class UsuarioRegistroForm(UserCreationForm):
 
         return user
 
-class UsuarioEditarForm(UserChangeForm):
-    password = None  # ocultar campo password en el form de edición (opcional)
-    class Meta:
-        model = Usuario
-        fields = ('first_name', 'last_name',  'telefono', 'url_imagen')
-
-
-
-# Usuarios/forms.py
-from django import forms
-from django.contrib.auth import get_user_model, authenticate
 
 User = get_user_model()
 
@@ -80,3 +70,12 @@ class EmailAuthenticationForm(forms.Form):
 
     def get_user(self):
         return self.user_cache
+
+
+
+class UsuarioEditarForm(UserChangeForm):
+    password = None  # ocultar campo password en el form de edición (opcional)
+    class Meta:
+        model = Usuario
+        fields = ('first_name', 'last_name',  'telefono', 'url_imagen')
+

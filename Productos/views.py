@@ -3,6 +3,22 @@ from django.shortcuts import render, redirect
 from .forms import ProductoForm
 from .models import Producto, ImagenProducto, OptionType, OptionValue, ProductVariant
 from .utils import obtener_carrito
+from django.core.paginator import Paginator
+from django.shortcuts import render
+from .models import Carrito
+from .utils import obtener_carrito
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+from .models import Carrito, CarritoItem
+from django.shortcuts import render, get_object_or_404
+from .models import Producto
+from django.shortcuts import render, get_object_or_404
+from .models import Producto, Categoria
+from django.core.serializers.json import DjangoJSONEncoder
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+from .models import Producto, ProductVariant, Carrito, CarritoItem
+
 
 
 def crear_producto(request):
@@ -86,21 +102,53 @@ def crear_producto(request):
     })
 
 
-from django.shortcuts import render, get_object_or_404
-from .models import Producto
+
+def producto_list(request, id_categoria=None):
+    categoria = None
+    titulo = 'Productos'
+
+    productos_qs = (
+        Producto.objects
+        .filter(visible=True)
+        .select_related('categoria')
+        .prefetch_related('imagenes')
+        .order_by('id_producto')
+    )
+
+    if id_categoria:
+        categoria = get_object_or_404(Categoria, id_categoria=id_categoria)
+        productos_qs = productos_qs.filter(categoria=categoria)
+        titulo = categoria.nombre
+
+    # 🔹 PAGINACIÓN
+    paginator = Paginator(productos_qs, 12)  # 12 productos por página
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    # 🔹 RANGO "Showing X–Y of Z"
+    start = (page_obj.number - 1) * paginator.per_page + 1
+    end = start + len(page_obj.object_list) - 1
+    total = paginator.count
+
+    context = {
+        'title': titulo,
+        'subTitle': 'Productos',
+        'subTitle2': titulo,
+        'footer': True,
+        'productos': page_obj,
+        'page_obj': page_obj,
+        'paginator': paginator,
+        'start': start,
+        'end': end,
+        'total': total,
+        'categoria': categoria,
+    }
+
+    return render(request, 'shop/fullWidthShop.html', context)
 
 
-def producto_list(request):
-    productos = Producto.objects.filter(visible=True).select_related('categoria')
-    return render(request, 'productos/producto_list.html', {
-        'productos': productos
-    })
 
-
-from django.core.serializers.json import DjangoJSONEncoder
-
-
-def producto_detail(request, id_producto):
+def productDetails(request, id_producto):
     producto = get_object_or_404(
         Producto.objects.prefetch_related(
             'imagenes',
@@ -110,26 +158,95 @@ def producto_detail(request, id_producto):
         id_producto=id_producto,
         visible=True
     )
-
-    variantes = []
-    for v in producto.variants.filter(activo=True):
-        variantes.append({
+    titulo = producto.nombre
+    variantes = [
+        {
             "id": str(v.id_variant),
             "opciones": v.opciones,
             "precio_extra": float(v.precio_extra),
             "stock": v.stock,
             "sku": v.sku,
+        }
+        for v in producto.variants.filter(activo=True)
+    ]
+    context = {
+        'title': titulo,
+        'subTitle': 'Inicio',
+        'subTitle2': titulo,
+        'footer': True,
+        'script': '<script src="/static/js/vendors/zoom.js"></script>',
+        'producto': producto,
+        'variantes_json': json.dumps(variantes, cls=DjangoJSONEncoder),
+    }
+    return render(request, "shop/productDetails.html", context)
+
+
+def cart(request):
+    carrito = obtener_carrito(request)
+    items = []
+    total = 0
+
+    for item in carrito.items.select_related('producto', 'variante'):
+        precio_unitario = item.producto.precio_base
+        if item.variante:
+            precio_unitario += item.variante.precio_extra
+
+        subtotal = precio_unitario * item.cantidad
+        total += subtotal
+
+        items.append({
+            'item': item,
+            'precio_unitario': precio_unitario,
+            'subtotal': subtotal
         })
 
-    return render(request, "productos/producto_detail.html", {
-        "producto": producto,
-        "variantes_json": json.dumps(variantes, cls=DjangoJSONEncoder),
+    data = {
+        'title': 'Carrito',
+        'subTitle': 'Shop',
+        'subTitle2': 'Carrito',
+        'css': '<link rel="stylesheet" type="text/css" href="/static/css/variables/variable6.css"/>',
+        'footer': 'true',
+        'script': '<script src="/static/js/vendors/zoom.js"></script>',
+    }
+
+    context = {
+        'items': items,
+        'total': total
+    }
+
+    context.update(data)
+
+    return render(request, "shop/cart.html", context)
+
+
+
+
+
+def ver_carrito(request):
+    carrito = obtener_carrito(request)
+    items = []
+    total = 0
+
+    for item in carrito.items.select_related('producto', 'variante'):
+        precio_unitario = item.producto.precio_base
+        if item.variante:
+            precio_unitario += item.variante.precio_extra
+
+        subtotal = precio_unitario * item.cantidad
+        total += subtotal
+
+        items.append({
+            'item': item,
+            'precio_unitario': precio_unitario,
+            'subtotal': subtotal
+        })
+
+    return render(request, 'productos/carrito.html', {
+        'items': items,
+        'total': total
     })
 
 
-from django.http import JsonResponse
-from django.views.decorators.http import require_POST
-from .models import Producto, ProductVariant, Carrito, CarritoItem
 
 
 @require_POST
@@ -177,42 +294,6 @@ def agregar_al_carrito(request):
     })
 
 
-from django.shortcuts import render
-from .models import Carrito
-
-from .utils import obtener_carrito
-
-
-def ver_carrito(request):
-    carrito = obtener_carrito(request)
-
-    items = []
-    total = 0
-
-    for item in carrito.items.select_related('producto', 'variante'):
-        precio_unitario = item.producto.precio_base
-        if item.variante:
-            precio_unitario += item.variante.precio_extra
-
-        subtotal = precio_unitario * item.cantidad
-        total += subtotal
-
-        items.append({
-            'item': item,
-            'precio_unitario': precio_unitario,
-            'subtotal': subtotal
-        })
-
-    return render(request, 'productos/carrito.html', {
-        'items': items,
-        'total': total
-    })
-
-
-from django.http import JsonResponse
-from django.views.decorators.http import require_POST
-from .models import Carrito, CarritoItem
-
 
 @require_POST
 def actualizar_item_carrito(request):
@@ -233,8 +314,8 @@ def actualizar_item_carrito(request):
     if not item:
         return JsonResponse({'error': 'Item no encontrado'}, status=404)
 
-    if item.variante and cantidad > item.variante.stock:
-        return JsonResponse({'error': 'Stock insuficiente'}, status=400)
+    #if item.variante and cantidad > item.variante.stock:
+     #   return JsonResponse({'error': 'Stock insuficiente'}, status=400)
 
     item.cantidad = cantidad
     item.save()
@@ -283,4 +364,45 @@ def eliminar_item_carrito(request):
     return JsonResponse({
         'success': True,
         'total': float(total)
+    })
+
+from django.http import JsonResponse
+from decimal import Decimal
+from django.http import JsonResponse
+
+def cart_data(request):
+    carrito = obtener_carrito(request)
+    items = []
+    total = Decimal('0.00')
+
+    for item in carrito.items.select_related('producto', 'variante'):
+        precio_unitario = item.producto.precio_base  # Decimal
+
+        variante_texto = None
+
+        if item.variante:
+            precio_unitario += item.variante.precio_extra or Decimal('0.00')
+            variante_texto = str(item.variante)
+
+        subtotal = precio_unitario * item.cantidad
+        total += subtotal
+
+        imagen = '/static/img/no-image.png'
+        imagen_principal = item.producto.imagen_principal()  #
+        if imagen_principal and imagen_principal.imagen:
+            imagen = imagen_principal.imagen.url
+
+        items.append({
+            'id': item.id_item,
+            'nombre': item.producto.nombre,
+            'imagen': imagen,
+            'cantidad': item.cantidad,
+            'precio_unitario': float(precio_unitario),
+            'subtotal': float(subtotal),
+            'variante': variante_texto,
+        })
+
+    return JsonResponse({
+        'items': items,
+        'total': float(total),
     })

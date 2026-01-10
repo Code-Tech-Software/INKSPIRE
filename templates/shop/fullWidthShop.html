@@ -1,0 +1,281 @@
+{% extends "layout/layout.html" %}
+{% load l10n %}
+{% block content %}
+
+    <!-- ..::Shop Section Start Here::.. -->
+    <div class="rts-shop-section section-gap">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-12">
+                    <div class="shop-product-topbar">
+                        <span class="items-onlist">Mostrado {{ start }}–{{ end }} de {{ total }} resultados</span>
+                        <div class="filter-area">
+                            <p class="select-area">
+                                <select class="select">
+                                    <option value="*">Sort by average rating</option>
+                                    <option value=".popular">Sort by popularity</option>
+                                    <option value=".best-rate">Sort by latest</option>
+                                    <option value=".on-sale">Sort by price: low to high</option>
+                                    <option value=".featured">Sort by price: high to low</option>
+                                </select>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="products-area products-area3">
+                        <div class="row justify-content-center">
+                            {% for producto in productos %}
+                                <div class="col-xl-3 col-md-4 col-sm-6">
+                                    <div class="product-item product-item2 element-item1">
+
+                                        <a href="{% url 'productos:productDetails' producto.id_producto %}"
+                                           class="product-image">
+                                            {% with img=producto.imagen_principal %}
+                                                {% if img %}
+                                                    <img src="{{ img.imagen.url }}" alt="{{ producto.nombre }}">
+                                                {% else %}
+                                                    <img src="/static/images/no-image.png" alt="Sin imagen">
+                                                {% endif %}
+                                            {% endwith %}
+                                        </a>
+
+                                        <div class="bottom-content">
+                                            <a href="{% url 'productos:productDetails' producto.id_producto %}"
+                                               class="product-name">
+                                                {{ producto.nombre }}
+                                            </a>
+                                            <div class="action-wrap">
+                                                <span class="product-price">${{ producto.precio_base|unlocalize }}</span>
+
+                                                {% if producto.variants.exists %}
+                                                    {# TIENE VARIANTES → ir a detalles #}
+                                                    <a href="{% url 'productos:productDetails' producto.id_producto %}"
+                                                       class="addto-cart">
+                                                        <i class="fal fa-sliders-h"></i> Seleccionar Variantes
+                                                    </a>
+                                                {% else %}
+                                                    {# NO TIENE VARIANTES → agregar directo #}
+                                                    <a href="#"
+                                                       class="addto-cart js-add-to-cart"
+                                                       data-producto-id="{{ producto.id_producto }}">
+                                                        <i class="fal fa-shopping-cart"></i> Añadir al Carrito
+                                                    </a>
+                                                {% endif %}
+                                            </div>
+
+                                        </div>
+
+                                        <div class="product-actions">
+                                            <a href="#" class="product-action">
+                                                <i class="fal fa-heart"></i>
+                                            </a>
+
+                                            <button class="product-action product-details-popup-btn">
+                                                <i class="fal fa-eye"></i>
+                                            </button>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            {% endfor %}
+
+                        </div>
+                    </div>
+
+
+                    <div class="product-pagination-area mt--20">
+                        {% if page_obj.has_previous %}
+                            <a href="?page={{ page_obj.previous_page_number }}" class="prev">
+                                <i class="far fa-long-arrow-left"></i>
+                            </a>
+                        {% endif %}
+
+                        {% for num in paginator.page_range %}
+                            {% if num == page_obj.number %}
+                                <button class="number active">{{ num }}</button>
+                            {% elif num >= page_obj.number|add:'-2' and num <= page_obj.number|add:'2' %}
+                                <a href="?page={{ num }}" class="number">{{ num }}</a>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if page_obj.has_next %}
+                            <a href="?page={{ page_obj.next_page_number }}" class="next">
+                                <i class="far fa-long-arrow-right"></i>
+                            </a>
+                        {% endif %}
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ..::Shop Section Section End Here::.. -->
+
+    <!-- ..::Product-details Section Start Here::.. -->
+    <div class="product-details-popup-wrapper">
+        <div class="rts-product-details-section rts-product-details-section2 product-details-popup-section">
+            <div class="product-details-popup">
+                <button class="product-details-close-btn"><i class="fal fa-times"></i></button>
+                <div class="details-product-area">
+                    <div class="product-thumb-area">
+                        <div class="cursor"></div>
+                        <div class="thumb-wrapper one filterd-items figure">
+                            <div class="product-thumb zoom" onmousemove="zoom(event)"
+                                 style="background-image: url('/static/images/products/product-details.jpg')"><img
+                                    src="/static/images/products/product-details.jpg" alt="product-thumb">
+                            </div>
+                        </div>
+                        <div class="thumb-wrapper two filterd-items hide">
+                            <div class="product-thumb zoom" onmousemove="zoom(event)"
+                                 style="background-image: url('/static/images/products/product-filt2.jpg')"><img
+                                    src="/static/images/products/product-filt2.jpg" alt="product-thumb">
+                            </div>
+                        </div>
+                        <div class="thumb-wrapper three filterd-items hide">
+                            <div class="product-thumb zoom" onmousemove="zoom(event)"
+                                 style="background-image: url('/static/images/products/product-filt3.jpg')"><img
+                                    src="/static/images/products/product-filt3.jpg" alt="product-thumb">
+                            </div>
+                        </div>
+                        <div class="product-thumb-filter-group">
+                            <div class="thumb-filter filter-btn active" data-show=".one"><img
+                                    src="/static/images/products/product-filt1.jpg" alt="product-thumb-filter"></div>
+                            <div class="thumb-filter filter-btn" data-show=".two"><img
+                                    src="/static/images/products/product-filt2.jpg" alt="product-thumb-filter"></div>
+                            <div class="thumb-filter filter-btn" data-show=".three"><img
+                                    src="/static/images/products/product-filt3.jpg" alt="product-thumb-filter"></div>
+                        </div>
+                    </div>
+                    <div class="contents">
+                        <div class="product-status">
+                            <span class="product-catagory">Dress</span>
+                            <div class="rating-stars-group">
+                                <div class="rating-star"><i class="fas fa-star"></i></div>
+                                <div class="rating-star"><i class="fas fa-star"></i></div>
+                                <div class="rating-star"><i class="fas fa-star-half-alt"></i></div>
+                                <span>10 Reviews</span>
+                            </div>
+                        </div>
+                        <h2 class="product-title">Wide Cotton Tunic Dress <span class="stock">In Stock</span></h2>
+                        <span class="product-price"><span class="old-price">$9.35</span> $7.25</span>
+                        <p>
+                            Priyoshop has brought to you the Hijab 3 Pieces Combo Pack PS23. It is a
+                            completely modern design and you feel comfortable to put on this hijab.
+                            Buy it at the best price.
+                        </p>
+                        <div class="product-bottom-action">
+                            <div class="cart-edit">
+                                <div class="quantity-edit action-item">
+                                    <button class="button minus"><i class="fal fa-minus minus"></i></button>
+                                    <input type="text" class="input" value="01"/>
+                                    <button class="button plus">+<i class="fal fa-plus plus"></i></button>
+                                </div>
+                            </div>
+                            <a href="" class="addto-cart-btn action-item"><i class="rt-basket-shopping"></i>
+                                Add To
+                                Cart</a>
+                            <a href="" class="wishlist-btn action-item"><i class="rt-heart"></i></a>
+                        </div>
+                        <div class="product-uniques">
+                            <span class="sku product-unipue"><span>SKU: </span> BO1D0MX8SJ</span>
+                            <span class="catagorys product-unipue"><span>Categories: </span> T-Shirts, Tops, Mens</span>
+                            <span class="tags product-unipue"><span>Tags: </span> fashion, t-shirts, Men</span>
+                        </div>
+                        <div class="share-social">
+                            <span>Share:</span>
+                            <a class="platform" href="http://facebook.com" target="_blank"><i
+                                    class="fab fa-facebook-f"></i></a>
+                            <a class="platform" href="http://twitter.com" target="_blank"><i
+                                    class="fab fa-twitter"></i></a>
+                            <a class="platform" href="http://behance.com" target="_blank"><i
+                                    class="fab fa-behance"></i></a>
+                            <a class="platform" href="http://youtube.com" target="_blank"><i
+                                    class="fab fa-youtube"></i></a>
+                            <a class="platform" href="http://linkedin.com" target="_blank"><i
+                                    class="fab fa-linkedin"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ..::Product-details Section End Here::.. -->
+
+
+
+    <!-- antes de tu <script> inline -->
+    <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
+    <style>
+        /* regla genérica por si no se aplica el selector anterior */
+        .notyf__toast .notyf__message {
+            color: #000000 !important;
+        }
+    </style>
+    <script>
+        // inicializa Notyf (colócalo antes del resto de tu código JS)
+        const notyf = new Notyf({
+            duration: 2000,
+
+            position: {x: 'right', y: 'top'},
+            types: [
+                {
+                    type: 'cart',               // tipo personalizado
+                    background: '#dadada',      // color del toast (verde)
+                    icon: {                     // icono usando Font Awesome
+                        className: 'fas fa-shopping-cart',
+                        tagName: 'i',
+                        color: '#000000'
+                    }
+                }
+            ]
+        });
+    </script>
+
+    <script>
+        document.addEventListener('click', function (e) {
+            const btn = e.target.closest('.js-add-to-cart');
+            if (!btn) return;
+
+            e.preventDefault();
+
+            const productoId = btn.dataset.productoId;
+
+            fetch("{% url 'productos:agregar_carrito' %}", {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content,
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    producto_id: productoId,
+                    cantidad: 1
+                })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        // 🔔 alerta bonita (Notyf o la que uses)
+                        notyf.open({
+                            type: 'cart',
+                            message: 'Producto agregado al carrito'
+                        });
+
+                        // 🔄 sincronizar header si ya lo tienes
+                        if (window.refreshHeaderCart) {
+                            window.refreshHeaderCart();
+                        }
+                    } else {
+                        alert(data.error || 'Error al agregar al carrito');
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert('Error al agregar al carrito');
+                });
+        });
+    </script>
+
+
+
+
+{% endblock content %}
